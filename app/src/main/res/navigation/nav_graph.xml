@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/addressListFragment">
+
+    <fragment
+        android:id="@+id/addressListFragment"
+        android:name="com.example.routecraft.features.addressList.AddressListFragment"
+        android:label="Stops"
+        tools:layout="@layout/fragment_address_list" >
+        <action
+            android:id="@+id/action_addressListFragment_to_addAddressFragment"
+            app:destination="@id/addAddressFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_addressListFragment_to_addAddressWithAutocompleteFragment"
+            app:destination="@id/addAddressWithAutocompleteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAddressFragment"
+        android:name="com.example.routecraft.features.addAddress.AddAddressFragment"
+        android:label="Add address"
+        tools:layout="@layout/fragment_add_address" />
+    <fragment
+        android:id="@+id/addressDetailsFragment"
+        android:name="com.example.routecraft.features.addressDetails.AddressDetailsFragment"
+        android:label="Address details"
+        tools:layout="@layout/fragment_address_details">
+        <action
+            android:id="@+id/action_addressDetailsFragment2_to_showNoteFragment"
+            app:destination="@id/showNoteFragment" />
+        <action
+            android:id="@+id/action_addressDetailsFragment2_to_addNoteFragment"
+            app:destination="@id/addNoteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addAddressWithAutocompleteFragment"
+        android:name="com.example.routecraft.features.addAddressWithAutocomplete.AddAddressWithAutocompleteFragment"
+        android:label="Add address"
+        tools:layout="@layout/fragment_add_address_with_autocomplete" />
+    <fragment
+        android:id="@+id/driveListFragment"
+        android:name="com.example.routecraft.features.driveList.DriveListFragment"
+        android:label="Route"
+        tools:layout="@layout/fragment_drive_list" />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.routecraft.features.map.MapFragment"
+        android:label="Map"
+        tools:layout="@layout/fragment_map" />
+    <fragment
+        android:id="@+id/showNoteFragment"
+        android:name="com.example.routecraft.features.addressDetails.ShowNoteFragment"
+        android:label="Note"
+        tools:layout="@layout/fragment_show_note" />
+    <fragment
+        android:id="@+id/addNoteFragment"
+        android:name="com.example.routecraft.features.addressDetails.AddNoteFragment"
+        android:label="Add note"
+        tools:layout="@layout/fragment_add_note" />
+    <action
+        android:id="@+id/action_global_addressDetailsFragment"
+        app:destination="@id/addressDetailsFragment"
+        app:enterAnim="@anim/slide_in_top"
+        app:exitAnim="@anim/slide_out_bottom"
+        app:popEnterAnim="@anim/slide_in_bottom"
+        app:popExitAnim="@anim/slide_out_top" />
+</navigation>

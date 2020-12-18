@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/addressListFragment"
+        android:icon="@drawable/ic_address"
+        android:title="@string/bottom_nav_menu_stops"
+        />
+
+    <item
+        android:id="@+id/mapFragment"
+        android:icon="@drawable/ic_map"
+        android:title="@string/bottom_nav_menu_map"
+        />
+
+    <item
+        android:id="@+id/driveListFragment"
+        android:icon="@drawable/ic_drive"
+        android:title="@string/bottom_nav_menu_route"
+        />
+
+</menu>

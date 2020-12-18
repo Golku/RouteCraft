@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RouteCraft</string>
+
+    <!-- MainActivity bottom navigation bar -->
+    <string name="bottom_nav_menu_stops">Stops</string>
+    <string name="bottom_nav_menu_map">Map</string>
+    <string name="bottom_nav_menu_route">Route</string>
+</resources>

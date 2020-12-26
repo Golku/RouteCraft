@@ -1,8 +1,55 @@
 <resources>
     <string name="app_name">RouteCraft</string>
 
+    <!-- MainActivity -->
+
+    <!-- MainActivity navigation view -->
+    <string name="navigation_view_username">Username</string>
+    <string name="navigation_view_my_routes">My routes</string>
+    <string name="navigation_view_new_route_btn">New route</string>
+    <string name="navigation_view_logout_btn">Logout</string>
+    <string name="route_menu_rename_route">Rename route</string>
+    <string name="route_menu_delete_route">Delete route</string>
+
+
     <!-- MainActivity bottom navigation bar -->
     <string name="bottom_nav_menu_stops">Stops</string>
     <string name="bottom_nav_menu_map">Map</string>
     <string name="bottom_nav_menu_route">Route</string>
+
+    <!-- /MainActivity -->
+
+    <!-- LoginActivity -->
+
+    <string name="login_activity_main_text">Rᴏᴜᴛᴇ Cʀᴀғᴛ</string>
+    <string name="login_activity_login_btn">Login</string>
+    <string name="login_activity_password_et_hint">password</string>
+    <string name="login_activity_username_et_hint">username</string>
+    <string name="login_activity_stay_logged_in_check_box">Stay Logged In</string>
+    <string name="login_activity_remember_username_check_box">Remember Username</string>
+
+    <!-- /LoginActivity -->
+
+    <!-- Dialog -->
+
+    <string name="dialog_message_tv">Message</string>
+    <string name="dialog_ok_btn">OK</string>
+    <string name="dialog_cancel_btn">Cancel</string>
+    <string name="dialog_rename_route_btn">Rename route</string>
+    <string name="dialog_add_route_btn">Add route</string>
+    <string name="dialog_loading_tv">Loading…</string>
+    <string name="dialog_delete_btn">Delete</string>
+    <string name="dialog_delete_route_title">Delete route</string>
+    <string name="dialog_are_you_sure_you_want_to_delete">Are you sure you want to delete</string>
+    <string name="dialog_route_name">route name</string>
+    <string name="dialog_new_route_title">New Route</string>
+    <string name="dialog_rename_route_title">Rename route</string>
+
+    <!-- /Dialog -->
+
+    <!-- Items -->
+    <string name="item_route_route_name">Route name</string>
+    <!-- /Items -->
+
+
 </resources>

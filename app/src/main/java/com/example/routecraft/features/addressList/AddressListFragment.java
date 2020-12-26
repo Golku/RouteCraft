@@ -1,5 +1,6 @@
 package com.example.routecraft.features.addressList;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +16,9 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
 import com.example.routecraft.NavGraphDirections;
+import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.databinding.FragmentAddressListBinding;
+import com.example.routecraft.features.login.LoginActivity;
 import com.example.routecraft.features.shared.SharedViewModel;
 
 public class AddressListFragment extends Fragment {
@@ -45,19 +48,13 @@ public class AddressListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-        binding.addAddressBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NavDirections action = AddressListFragmentDirections.actionAddressListFragmentToAddAddressFragment();
-                navController.navigate(action);
-            }
+        binding.addAddressBtn.setOnClickListener(view12 -> {
+            NavDirections action = AddressListFragmentDirections.actionAddressListFragmentToAddAddressFragment();
+            navController.navigate(action);
         });
-        binding.showAddressDetailsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NavDirections action = NavGraphDirections.actionGlobalAddressDetailsFragment();
-                navController.navigate(action);
-            }
+        binding.showAddressDetailsBtn.setOnClickListener(view1 -> {
+            NavDirections action = NavGraphDirections.actionGlobalAddressDetailsFragment();
+            navController.navigate(action);
         });
     }
 

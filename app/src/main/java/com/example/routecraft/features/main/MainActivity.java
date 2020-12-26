@@ -1,0 +1,176 @@
+package com.example.routecraft.features.main;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.fragment.app.DialogFragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
+import com.example.routecraft.R;
+import com.example.routecraft.data.pojos.Route;
+import com.example.routecraft.data.pojos.Session;
+import com.example.routecraft.databinding.ActivityMainBinding;
+import com.example.routecraft.features.dialogs.CreateNewRouteDialog;
+import com.example.routecraft.features.dialogs.DeleteRouteDialog;
+import com.example.routecraft.features.dialogs.RenameRouteDialog;
+import com.example.routecraft.features.login.LoginActivity;
+import com.example.routecraft.features.shared.SharedViewModel;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+public class MainActivity extends AppCompatActivity implements RouteAdapter.Listener,
+        CreateNewRouteDialog.Listener,
+        RenameRouteDialog.Listener,
+        DeleteRouteDialog.Listener {
+
+    private final String DEBUG_TAG = "DEBUG_TAG";
+
+    private Session session;
+
+    private MainActivityViewModel viewModel;
+    private SharedViewModel sharedViewModel;
+    private NavController navController;
+    private ActivityMainBinding binding;
+    private AppBarConfiguration appBarConfiguration;
+
+    private RouteAdapter routeAdapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        init();
+    }
+
+    private void init() {
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        //sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+        session = new Session(this);
+
+        binding.usernameTv.setText(session.getUsername());
+
+        routeAdapter = new RouteAdapter(this);
+        binding.routeListRv.setAdapter(routeAdapter);
+
+        viewModel.getAllRoutes().observe(this, new Observer<List<Route>>() {
+            @Override
+            public void onChanged(List<Route> routes) {
+                routeAdapter.setRouteList(routes);
+            }
+        });
+
+        setOnClickListeners();
+
+        viewModel.findRoute(session.getCurrentRoute());
+//        viewModel.getRouteFromDb(session.getCurrentRoute());
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
+        Set<Integer> topLevelDestinations = new HashSet<>();
+        topLevelDestinations.add(R.id.addressListFragment);
+        topLevelDestinations.add(R.id.mapFragment);
+        topLevelDestinations.add(R.id.driveListFragment);
+        appBarConfiguration = new AppBarConfiguration.Builder(topLevelDestinations).setOpenableLayout(binding.drawerLayout).build();
+
+        setSupportActionBar(binding.toolbar);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.bottomNav, navController);
+        NavigationUI.setupWithNavController(binding.navView, navController);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
+    }
+
+    private void setOnClickListeners() {
+        binding.createNewRouteBtn.setOnClickListener(view -> openNewRouteDialog());
+        binding.logoutBtn.setOnClickListener(view -> {
+
+            if (!session.getRememberUsername()) {
+                session.setUserId(0);
+                session.setUsername("");
+            }
+
+            if (session.getStayLoggedIn()) {
+                session.setStayLoggedIn(false);
+            }
+
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
+    }
+
+    @Override
+    public void routeClicked(Route route) {
+        route.setSelected(true);
+        session.setCurrentRoute(route.getRouteName());
+        binding.drawerLayout.closeDrawer(GravityCompat.START);
+        viewModel.loadRoute(route);
+    }
+
+    private void openNewRouteDialog() {
+        DialogFragment createNewRouteDialog = new CreateNewRouteDialog();
+        createNewRouteDialog.show(getSupportFragmentManager(), "create route");
+    }
+
+    @Override
+    public void onNewRouteName(String routeName) {
+        viewModel.createNewRoute(routeName);
+    }
+
+    @Override
+    public void openRenameRouteDialog(Route route) {
+        viewModel.setRouteToModify(route);
+        Bundle bundle = new Bundle();
+        bundle.putString("ROUTE_NAME", route.getRouteName());
+        DialogFragment renameRouteDialog = new RenameRouteDialog();
+        renameRouteDialog.setArguments(bundle);
+        renameRouteDialog.setCancelable(false);
+        renameRouteDialog.show(getSupportFragmentManager(), "rename route");
+    }
+
+    @Override
+    public void onRenameRoute(String routeName) {
+        viewModel.renameRoute(viewModel.getRouteToModify(), routeName);
+    }
+
+    @Override
+    public void openDeleteRouteDialog(Route route) {
+
+        if(viewModel.getAllRoutes().getValue() != null && viewModel.getAllRoutes().getValue().size() == 1){
+            Toast.makeText(this, "Can't delete only route", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        viewModel.setRouteToModify(route);
+        Bundle bundle = new Bundle();
+        bundle.putString("ROUTE_NAME", route.getRouteName());
+        DialogFragment deleteRouteDialog = new DeleteRouteDialog();
+        deleteRouteDialog.setArguments(bundle);
+        deleteRouteDialog.show(getSupportFragmentManager(), "delete route");
+    }
+
+    @Override
+    public void onDeleteRoute() {
+        viewModel.deleteRoute(viewModel.getRouteToModify());
+    }
+}

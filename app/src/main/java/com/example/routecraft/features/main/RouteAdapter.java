@@ -51,6 +51,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.CustomViewHo
     @Override
     public void onBindViewHolder(@NonNull CustomViewHolder holder, int position) {
         holder.routeName.setText(routeList.get(position).getRouteName());
+
 //        if(routeList.get(position).isSelected()){
 //            holder.container.setBackgroundColor(Color.parseColor("#e0e0e0"));
 //            holder.routeName.setTextColor(Color.parseColor("#167ef9"));
@@ -62,6 +63,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.CustomViewHo
 //            holder.routeName.setTypeface(Typeface.DEFAULT);
 //            holder.routeMenuIb.setBackgroundColor(Color.WHITE);
 //        }
+
     }
 
     @Override

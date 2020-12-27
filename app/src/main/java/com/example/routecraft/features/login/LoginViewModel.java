@@ -1,6 +1,8 @@
 package com.example.routecraft.features.login;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -27,7 +29,9 @@ public class LoginViewModel extends AndroidViewModel implements LoginRepository.
     }
 
     public void loginRequest(String username, String password) {
-        repository.loginRequest(username, password);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            repository.loginRequest(username, password);
+        }, 1000);
     }
 
     @Override

@@ -28,7 +28,7 @@ public class RouteRepository {
         void onRouteRetrieved(Route route);
     }
 
-    public void get(String routeName){ new GetRouteAsyncTask(routeDao, listener).execute(routeName);}
+    public void get(int routeId){ new GetRouteAsyncTask(routeDao, listener).execute(routeId);}
 
     public void insert(Route route){
         new InsertRouteAsyncTask(routeDao).execute(route);
@@ -46,7 +46,7 @@ public class RouteRepository {
         return allRoutes;
     }
 
-    private static class GetRouteAsyncTask extends AsyncTask<String, Void,Void> {
+    private static class GetRouteAsyncTask extends AsyncTask<Integer, Void,Void> {
         private RouteDao routeDao;
         private Listener listener;
 
@@ -56,8 +56,8 @@ public class RouteRepository {
         }
 
         @Override
-        protected Void doInBackground(String... routeName) {
-            listener.onRouteRetrieved(routeDao.get(routeName[0]));
+        protected Void doInBackground(Integer... routeId) {
+            listener.onRouteRetrieved(routeDao.get(routeId[0]));
             return null;
         }
     }

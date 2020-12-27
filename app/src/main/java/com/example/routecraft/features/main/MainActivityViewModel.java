@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 
 import com.example.routecraft.data.pojos.IdHolder;
 import com.example.routecraft.data.pojos.Route;
+import com.example.routecraft.data.pojos.Session;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -39,61 +40,87 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 
     public interface Listener {
 //        void updateFragmentInfo();
+        Session getSession();
     }
 
     public void setViewListener(Listener view){
         this.view = view;
     }
 
-    public void findRoute(String routeName){
-
-        Log.d(DEBUG_TAG, "Looking for: "+ routeName);
-
-        if(allRoutes.getValue() != null){
-            for(Route route : allRoutes.getValue()){
-                Log.d(DEBUG_TAG, "Checking: "+ route.getRouteName());
-                Log.d(DEBUG_TAG, "ID: "+ route.getId());
-
-                if(route.getRouteName().equals(routeName)){
-                    loadRoute(route);
-                    break;
-                }
-            }
-        }else{
-            getRoute(routeName);
-        }
-    }
-
     public void loadRoute(Route route){
 
         if(route == null){
             Log.d(DEBUG_TAG, "Route is null");
-            currentRoute = new Route("My first route");
-            currentRoute.setId(1);
+            currentRoute = new Route(1, "My first route");
         }else{
+
+            if(currentRoute != null){
+                currentRoute.setSelected(false);
+                Log.d(DEBUG_TAG, "Deselected: " + currentRoute.getRouteName());
+                updateRoute(currentRoute);
+            }
+
             currentRoute = route;
+
+            if(!currentRoute.isSelected()){
+                currentRoute.setSelected(true);
+                Log.d(DEBUG_TAG, "Selecting: " + currentRoute.getRouteName());
+                updateRoute(route);
+            }
         }
 
-        Log.d(DEBUG_TAG, "Route name: " + currentRoute.getRouteName());
-        Log.d(DEBUG_TAG, "AddressIdList: " + currentRoute.getAddressIdList());
-        Log.d(DEBUG_TAG, "DriveIdList: " + currentRoute.getDriveIdList());
+        view.getSession().setCurrentRoute(currentRoute.getId());
 
-        Gson gson = new Gson();
-        IdHolder addressIdHolder = gson.fromJson(currentRoute.getAddressIdList(), IdHolder.class);
-        IdHolder driveIdHolder = gson.fromJson(currentRoute.getDriveIdList(), IdHolder.class);
+        Log.d(DEBUG_TAG, "Route ID: " + currentRoute.getId());
+        Log.d(DEBUG_TAG, "Route Name: " + currentRoute.getRouteName());
+        Log.d(DEBUG_TAG, "Route Selected: " + currentRoute.isSelected());
 
-        addressIdLIst = addressIdHolder.getIdList();
-        driveIdLIst = driveIdHolder.getIdList();
+//        if(route == null){
+//            Log.d(DEBUG_TAG, "Route is null");
+//            currentRoute = new Route("My first route");
+//            currentRoute.setSelected(true);
+//            currentRoute.setId(1);
+//        }else{
+//
+//            if (currentRoute != null) {
+//                Log.d(DEBUG_TAG, "Setting route: " + currentRoute.getRouteName() + " to not selected");
+//                currentRoute.setSelected(false);
+//                updateRoute(currentRoute);
+//            }else{
+//                Log.d(DEBUG_TAG, "Current route is null");
+//            }
+//
+//            currentRoute = route;
+//
+//            if(!currentRoute.isSelected()){
+//                currentRoute.setSelected(true);
+//                updateRoute(route);
+//            }
+//        }
+//
+//        Log.d(DEBUG_TAG, "Route name: " + currentRoute.getRouteName());
+//        Log.d(DEBUG_TAG, "AddressIdList: " + currentRoute.getAddressIdList());
+//        Log.d(DEBUG_TAG, "DriveIdList: " + currentRoute.getDriveIdList());
 
-        Log.d(DEBUG_TAG, "AddressIdList size: " + addressIdLIst.size());
-        Log.d(DEBUG_TAG, "DriveIdList size: " + driveIdLIst.size());
+//        Gson gson = new Gson();
+//        IdHolder addressIdHolder = gson.fromJson(currentRoute.getAddressIdList(), IdHolder.class);
+//        IdHolder driveIdHolder = gson.fromJson(currentRoute.getDriveIdList(), IdHolder.class);
+//
+//        addressIdLIst = addressIdHolder.getIdList();
+//        driveIdLIst = driveIdHolder.getIdList();
+
+//        Log.d(DEBUG_TAG, "AddressIdList size: " + addressIdLIst.size());
+//        Log.d(DEBUG_TAG, "DriveIdList size: " + driveIdLIst.size());
 
 //        view.updateFragmentInfo();
     }
 
     public void createNewRoute(String routeName){
-        Route route = new Route(routeName);
-        route.setSelected(true);
+        int newRouteId = view.getSession().getNewRouteId();
+        Log.d(DEBUG_TAG, "Creating new route with id: " + newRouteId);
+        Log.d(DEBUG_TAG, "Creating new route with name: " + routeName);
+
+        Route route = new Route(newRouteId, routeName);
         insertRoute(route);
         loadRoute(route);
     }
@@ -131,13 +158,15 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
         updateRoute(currentRoute);
     }
 
+
     @Override
     public void onRouteRetrieved(Route route) {
         loadRoute(route);
     }
 
-    public void getRoute(String routeName){
-        routeRepository.get(routeName);
+    public void getRoute(int routeId){
+        Log.d(DEBUG_TAG, "Getting route with id: " + routeId);
+        routeRepository.get(routeId);
     }
 
     public void insertRoute(Route route){
@@ -149,6 +178,11 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
     }
 
     public void deleteRoute(Route route){
+
+        if(route.getId() == currentRoute.getId()){
+            Log.d(DEBUG_TAG, "Deleting currently selected");
+            loadRoute(allRoutes.getValue().get(1));
+        }
         routeRepository.delete(route);
     }
 

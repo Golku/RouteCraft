@@ -6,25 +6,25 @@ import androidx.room.PrimaryKey;
 @Entity()
 public class Route {
 
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey()
     private int id;
     private String routeName;
     private boolean selected;
     private String AddressIdList;
     private String driveIdList;
+    private Long creationDate;
 
-    public Route(String routeName) {
+    public Route(int id, String routeName) {
+        this.id = id;
         this.routeName = routeName;
+        selected = true;
         AddressIdList = "{\"idList\":[]}";
         driveIdList = "{\"idList\":[]}";
+        creationDate = System.currentTimeMillis();
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getRouteName() {
@@ -57,5 +57,13 @@ public class Route {
 
     public void setDriveIdList(String driveIdList) {
         this.driveIdList = driveIdList;
+    }
+
+    public void setCreationDate(Long creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Long getCreationDate() {
+        return creationDate;
     }
 }

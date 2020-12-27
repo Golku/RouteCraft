@@ -10,6 +10,7 @@ public class Session {
     private final String REMEMBER_USERNAME = "REMEMBER_USERNAME";
     private final String STAY_LOGGED_IN = "STAY_LOGGED_IN";
     private final String CURRENT_ROUTE = "CURRENT_ROUTE";
+    private final String NEW_ROUTE_ID = "NEW_ROUTE_ID";
 
     private SharedPreferences prefs;
 
@@ -37,9 +38,20 @@ public class Session {
         editor.putBoolean(STAY_LOGGED_IN, checked).apply();
     }
 
-    public void setCurrentRoute(String routeName) {
+    public void setCurrentRoute(int routeId) {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(CURRENT_ROUTE, routeName).apply();
+        editor.putInt(CURRENT_ROUTE, routeId).apply();
+    }
+
+    public int getNewRouteId(){
+
+        int newId = prefs.getInt(NEW_ROUTE_ID, 1) + 1;
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(NEW_ROUTE_ID, newId).apply();
+
+        return newId;
+
     }
 
     public int getUserId() {
@@ -58,5 +70,5 @@ public class Session {
         return prefs.getBoolean(STAY_LOGGED_IN, false);
     }
 
-    public String getCurrentRoute(){return prefs.getString(CURRENT_ROUTE, "My first route");}
+    public int getCurrentRoute(){return prefs.getInt(CURRENT_ROUTE, 1);}
 }

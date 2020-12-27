@@ -30,7 +30,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MainActivity extends AppCompatActivity implements RouteAdapter.Listener,
+public class MainActivity extends AppCompatActivity implements MainActivityViewModel.Listener,
+        RouteAdapter.Listener,
         CreateNewRouteDialog.Listener,
         RenameRouteDialog.Listener,
         DeleteRouteDialog.Listener {
@@ -57,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements RouteAdapter.List
 
     private void init() {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        viewModel.setViewListener(this);
         //sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         session = new Session(this);
 
@@ -74,8 +76,7 @@ public class MainActivity extends AppCompatActivity implements RouteAdapter.List
 
         setOnClickListeners();
 
-        viewModel.findRoute(session.getCurrentRoute());
-//        viewModel.getRouteFromDb(session.getCurrentRoute());
+        viewModel.getRoute(session.getCurrentRoute());
     }
 
     @Override
@@ -102,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements RouteAdapter.List
 
     private void setOnClickListeners() {
         binding.createNewRouteBtn.setOnClickListener(view -> openNewRouteDialog());
+
         binding.logoutBtn.setOnClickListener(view -> {
 
             if (!session.getRememberUsername()) {
@@ -121,19 +123,24 @@ public class MainActivity extends AppCompatActivity implements RouteAdapter.List
 
     @Override
     public void routeClicked(Route route) {
-        route.setSelected(true);
-        session.setCurrentRoute(route.getRouteName());
+        Log.d(DEBUG_TAG, "Route clicked, route ID: " + route.getId());
         binding.drawerLayout.closeDrawer(GravityCompat.START);
+        if(viewModel.getCurrentRoute().getId() == route.getId()){
+            Log.d(DEBUG_TAG, "This route is already loaded");
+            return;
+        }
         viewModel.loadRoute(route);
     }
 
     private void openNewRouteDialog() {
         DialogFragment createNewRouteDialog = new CreateNewRouteDialog();
+        createNewRouteDialog.setCancelable(false);
         createNewRouteDialog.show(getSupportFragmentManager(), "create route");
     }
 
     @Override
     public void onNewRouteName(String routeName) {
+        binding.drawerLayout.closeDrawer(GravityCompat.START);
         viewModel.createNewRoute(routeName);
     }
 
@@ -172,5 +179,10 @@ public class MainActivity extends AppCompatActivity implements RouteAdapter.List
     @Override
     public void onDeleteRoute() {
         viewModel.deleteRoute(viewModel.getRouteToModify());
+    }
+
+    @Override
+    public Session getSession() {
+        return session;
     }
 }

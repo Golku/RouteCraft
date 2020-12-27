@@ -1,6 +1,5 @@
 package com.example.routecraft.features.dialogs;
 
-
 import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -21,6 +20,7 @@ public class GenericMessageDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_generic_message, null);
 

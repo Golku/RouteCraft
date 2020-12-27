@@ -14,8 +14,8 @@ import java.util.List;
 @Dao
 public interface RouteDao {
 
-    @Query("SELECT * FROM Route WHERE routeName == :routeName")
-    Route get(String routeName);
+    @Query("SELECT * FROM Route WHERE id == :routeId")
+    Route get(int routeId);
 
     @Insert
     void insert(Route route);
@@ -26,6 +26,6 @@ public interface RouteDao {
     @Delete
     void delete(Route route);
 
-    @Query("SELECT * FROM Route ORDER BY selected DESC")
+    @Query("SELECT * FROM Route ORDER BY selected DESC, creationDate DESC")
     LiveData<List<Route>> getAllRoutes();
 }

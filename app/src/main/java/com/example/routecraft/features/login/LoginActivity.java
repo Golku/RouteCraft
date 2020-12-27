@@ -6,12 +6,15 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+import com.example.routecraft.R;
 import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.databinding.ActivityLoginBinding;
 import com.example.routecraft.features.main.MainActivity;
@@ -74,10 +77,8 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
 
             showGenericLoadingDialog();
 
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                username = binding.usernameEt.getText().toString();
-                viewModel.loginRequest(username.toLowerCase(), binding.passwordEt.getText().toString());
-            }, 1000);
+            username = binding.usernameEt.getText().toString();
+            viewModel.loginRequest(username.toLowerCase(), binding.passwordEt.getText().toString());
         });
     }
 

@@ -50,8 +50,7 @@ public abstract class RouteDatabase extends RoomDatabase{
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Route route = new Route("My first route");
-            route.setSelected(true);
+            Route route = new Route(1, "My first route");
             routeDao.insert(route);
             return null;
         }

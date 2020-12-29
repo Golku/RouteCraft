@@ -1,7 +1,7 @@
 package com.example.routecraft.features.main;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -13,7 +13,6 @@ import androidx.navigation.ui.NavigationUI;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.example.routecraft.R;
@@ -66,11 +65,17 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
 
         routeAdapter = new RouteAdapter(this);
         binding.routeListRv.setAdapter(routeAdapter);
+        binding.routeListRv.setHasFixedSize(true);
 
         viewModel.getAllRoutes().observe(this, new Observer<List<Route>>() {
             @Override
             public void onChanged(List<Route> routes) {
-                routeAdapter.setRouteList(routes);
+                Log.d(DEBUG_TAG, "Submitting new list");
+
+//                routeAdapter = new RouteAdapter(MainActivity.this);
+//                binding.routeListRv.setAdapter(routeAdapter);
+
+                routeAdapter.submitList(routes);
             }
         });
 
@@ -124,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     @Override
     public void routeClicked(Route route) {
         Log.d(DEBUG_TAG, "Route clicked, route ID: " + route.getId());
-        binding.drawerLayout.closeDrawer(GravityCompat.START);
+        //binding.drawerLayout.closeDrawer(GravityCompat.START);
         if(viewModel.getCurrentRoute().getId() == route.getId()){
             Log.d(DEBUG_TAG, "This route is already loaded");
             return;
@@ -140,15 +145,16 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
 
     @Override
     public void onNewRouteName(String routeName) {
-        binding.drawerLayout.closeDrawer(GravityCompat.START);
+//        binding.drawerLayout.closeDrawer(GravityCompat.START);
         viewModel.createNewRoute(routeName);
     }
 
     @Override
-    public void openRenameRouteDialog(Route route) {
+    public void openRenameRouteDialog(@NonNull Route route) {
+        //Log.d(DEBUG_TAG, "Rename dialog");
         viewModel.setRouteToModify(route);
         Bundle bundle = new Bundle();
-        bundle.putString("ROUTE_NAME", route.getRouteName());
+        bundle.putString("ROUTE_NAME", route.getName());
         DialogFragment renameRouteDialog = new RenameRouteDialog();
         renameRouteDialog.setArguments(bundle);
         renameRouteDialog.setCancelable(false);
@@ -161,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     }
 
     @Override
-    public void openDeleteRouteDialog(Route route) {
+    public void openDeleteRouteDialog(@NonNull Route route) {
 
         if(viewModel.getAllRoutes().getValue() != null && viewModel.getAllRoutes().getValue().size() == 1){
             Toast.makeText(this, "Can't delete only route", Toast.LENGTH_SHORT).show();
@@ -170,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
 
         viewModel.setRouteToModify(route);
         Bundle bundle = new Bundle();
-        bundle.putString("ROUTE_NAME", route.getRouteName());
+        bundle.putString("ROUTE_NAME", route.getName());
         DialogFragment deleteRouteDialog = new DeleteRouteDialog();
         deleteRouteDialog.setArguments(bundle);
         deleteRouteDialog.show(getSupportFragmentManager(), "delete route");

@@ -54,60 +54,50 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
             currentRoute = new Route(1, "My first route");
         }else{
 
+            Log.d(DEBUG_TAG, "Loading route");
+            debugRoute(route);
+
             if(currentRoute != null){
-                currentRoute.setSelected(false);
-                Log.d(DEBUG_TAG, "Deselected: " + currentRoute.getRouteName());
-                updateRoute(currentRoute);
+
+//                currentRoute.setSelected(false);
+
+                Route updatedRoute = currentRoute.copy(currentRoute.getId(), currentRoute.getName());
+                updatedRoute.setSelected(false);
+
+                Log.d(DEBUG_TAG, "Deselected");
+                debugRoute(updatedRoute);
+
+                updateRoute(updatedRoute);
             }
 
             currentRoute = route;
 
-            if(!currentRoute.isSelected()){
-                currentRoute.setSelected(true);
-                Log.d(DEBUG_TAG, "Selecting: " + currentRoute.getRouteName());
-                updateRoute(route);
+            if(!currentRoute.getSelected()){
+
+                //currentRoute.setSelected(true);
+
+                Route updatedRoute = currentRoute.copy(currentRoute.getId(), currentRoute.getName());
+                updatedRoute.setSelected(true);
+
+                Log.d(DEBUG_TAG, "Selecting");
+                debugRoute(updatedRoute);
+
+                updateRoute(updatedRoute);
             }
         }
 
         view.getSession().setCurrentRoute(currentRoute.getId());
 
-        Log.d(DEBUG_TAG, "Route ID: " + currentRoute.getId());
-        Log.d(DEBUG_TAG, "Route Name: " + currentRoute.getRouteName());
-        Log.d(DEBUG_TAG, "Route Selected: " + currentRoute.isSelected());
+//        Log.d(DEBUG_TAG, "Route ID: " + currentRoute.getId());
+//        Log.d(DEBUG_TAG, "Route Name: " + currentRoute.getName());
+//        Log.d(DEBUG_TAG, "Route Selected: " + currentRoute.getSelected());
 
-//        if(route == null){
-//            Log.d(DEBUG_TAG, "Route is null");
-//            currentRoute = new Route("My first route");
-//            currentRoute.setSelected(true);
-//            currentRoute.setId(1);
-//        }else{
-//
-//            if (currentRoute != null) {
-//                Log.d(DEBUG_TAG, "Setting route: " + currentRoute.getRouteName() + " to not selected");
-//                currentRoute.setSelected(false);
-//                updateRoute(currentRoute);
-//            }else{
-//                Log.d(DEBUG_TAG, "Current route is null");
-//            }
-//
-//            currentRoute = route;
-//
-//            if(!currentRoute.isSelected()){
-//                currentRoute.setSelected(true);
-//                updateRoute(route);
-//            }
-//        }
-//
-//        Log.d(DEBUG_TAG, "Route name: " + currentRoute.getRouteName());
-//        Log.d(DEBUG_TAG, "AddressIdList: " + currentRoute.getAddressIdList());
-//        Log.d(DEBUG_TAG, "DriveIdList: " + currentRoute.getDriveIdList());
+        Gson gson = new Gson();
+        IdHolder addressIdHolder = gson.fromJson(currentRoute.getAddressIdList(), IdHolder.class);
+        IdHolder driveIdHolder = gson.fromJson(currentRoute.getDriveIdList(), IdHolder.class);
 
-//        Gson gson = new Gson();
-//        IdHolder addressIdHolder = gson.fromJson(currentRoute.getAddressIdList(), IdHolder.class);
-//        IdHolder driveIdHolder = gson.fromJson(currentRoute.getDriveIdList(), IdHolder.class);
-//
-//        addressIdLIst = addressIdHolder.getIdList();
-//        driveIdLIst = driveIdHolder.getIdList();
+        addressIdLIst = addressIdHolder.getIdList();
+        driveIdLIst = driveIdHolder.getIdList();
 
 //        Log.d(DEBUG_TAG, "AddressIdList size: " + addressIdLIst.size());
 //        Log.d(DEBUG_TAG, "DriveIdList size: " + driveIdLIst.size());
@@ -117,22 +107,35 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 
     public void createNewRoute(String routeName){
         int newRouteId = view.getSession().getNewRouteId();
-        Log.d(DEBUG_TAG, "Creating new route with id: " + newRouteId);
-        Log.d(DEBUG_TAG, "Creating new route with name: " + routeName);
+//        Log.d(DEBUG_TAG, "Creating new route with id: " + newRouteId);
+//        Log.d(DEBUG_TAG, "Creating new route with name: " + routeName);
 
         Route route = new Route(newRouteId, routeName);
         insertRoute(route);
         loadRoute(route);
     }
 
+    private void debugRoute(Route route){
+        Log.d(DEBUG_TAG, "Id: " + route.getId());
+        Log.d(DEBUG_TAG, "Name: " + route.getName());
+        Log.d(DEBUG_TAG, "Selected: " + route.getSelected());
+        Log.d(DEBUG_TAG, "AddressList: " + route.getAddressIdList());
+        Log.d(DEBUG_TAG, "DriveList: " + route.getDriveIdList());
+        Log.d(DEBUG_TAG, "Creation time: " + route.getCreationDate());
+    }
+
     public void renameRoute(Route route, String routeName){
-        route.setRouteName(routeName);
-        updateRoute(route);
+        Log.d(DEBUG_TAG, "renaming route");
+//        debugRoute(route.co);
+//        Route updatedRoute = route.copyRoute(route, routeName);
+        Log.d(DEBUG_TAG, "renaming");
+//        debugRoute(updatedRoute);
+//        updateRoute(updatedRoute);
     }
 
     public void updateRouteAddressIdList(List<Integer> addressIdLIst){
 
-        Log.d("debugTag", "New address added to "+ currentRoute.getRouteName());
+        Log.d(DEBUG_TAG, "New address added to "+ currentRoute.getName());
 
         IdHolder idHolder = new IdHolder();
         idHolder.setIdList(addressIdLIst);
@@ -146,7 +149,7 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 
     public void updateRouteDriveIdLIst(List<Integer> driveIdList){
 
-        Log.d("debugTag", "New drive added to "+ currentRoute.getRouteName());
+        Log.d(DEBUG_TAG, "New drive added to "+ currentRoute.getName());
 
         IdHolder idHolder = new IdHolder();
         idHolder.setIdList(driveIdList);
@@ -157,7 +160,6 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 
         updateRoute(currentRoute);
     }
-
 
     @Override
     public void onRouteRetrieved(Route route) {

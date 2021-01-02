@@ -1,5 +1,6 @@
 package com.example.routecraft.features.login;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -21,17 +22,19 @@ import com.example.routecraft.features.main.MainActivity;
 import com.example.routecraft.features.dialogs.GenericLoadingDialog;
 import com.example.routecraft.features.dialogs.GenericMessageDialog;
 
-public class LoginActivity extends AppCompatActivity implements LoginViewModel.ViewListener {
+public class LoginActivity extends AppCompatActivity implements LoginViewModel.ViewListener,
+        GenericMessageDialog.Listener {
 
     private final String debugTag = "debugTag";
 
     private Session session;
     private ActivityLoginBinding binding;
     private LoginViewModel viewModel;
-    
+
     private String username;
-    private DialogFragment genericLoadingDialog;
-    
+    private AlertDialog genericMessageDialog;
+    private AlertDialog genericLoadingDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,12 +43,12 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
         init();
     }
 
-    private void init(){
+    private void init() {
         viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
         viewModel.setViewListener(this);
         session = new Session(this);
 
-        if(session.getRememberUsername()){
+        if (session.getRememberUsername()) {
             binding.usernameEt.setText(session.getUsername());
             binding.rememberMeCb.setChecked(true);
             binding.passwordEt.requestFocus();
@@ -54,12 +57,12 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
         setOnClickListeners();
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if(session.getStayLoggedIn()){
+            if (session.getStayLoggedIn()) {
                 grantAccess();
-            }else{
+            } else {
                 binding.loginCl.setVisibility(View.VISIBLE);
 
-                if(session.getRememberUsername()){
+                if (session.getRememberUsername()) {
                     InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.showSoftInput(binding.passwordEt, 0);
                 }
@@ -67,10 +70,10 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
         }, 1000);
     }
 
-    private void setOnClickListeners(){
+    private void setOnClickListeners() {
         binding.loginBtn.setOnClickListener(view -> {
 
-            if(getCurrentFocus() != null){
+            if (getCurrentFocus() != null) {
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
             }
@@ -92,14 +95,14 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
 
         session.setRememberUsername(binding.rememberMeCb.isChecked());
 
-        if(binding.stayLoggedInCb.isChecked()) {
+        if (binding.stayLoggedInCb.isChecked()) {
             session.setStayLoggedIn(true);
         }
 
         grantAccess();
     }
 
-    private void grantAccess(){
+    private void grantAccess() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
@@ -108,27 +111,32 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
     @Override
     public void loginFailed(String message) {
         dismissGenericLoadingDialog();
-        new Handler(Looper.getMainLooper()).postDelayed(() -> showGenericMessageDialog(message), 150);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> showGenericMessageDialog(message),
+                150);
     }
 
-    private void showGenericMessageDialog(String message){
-        Bundle bundle = new Bundle();
-        bundle.putString("DIALOG_MESSAGE_KEY", message);
-        DialogFragment genericMessageDialog = new GenericMessageDialog();
-        genericMessageDialog.setArguments(bundle);
-        genericMessageDialog.show(getSupportFragmentManager(), "generic message");
+    private void showGenericMessageDialog(String message) {
+        genericMessageDialog = new GenericMessageDialog(this,
+                getLayoutInflater(),
+                message)
+                .create();
+        genericMessageDialog.show();
     }
 
-    private void showGenericLoadingDialog(){
-        Bundle bundle = new Bundle();
-        bundle.putString("DIALOG_MESSAGE_KEY", "Logging in");
-        genericLoadingDialog = new GenericLoadingDialog();
-        genericLoadingDialog.setArguments(bundle);
-        genericLoadingDialog.setCancelable(false);
-        genericLoadingDialog.show(getSupportFragmentManager(), "generic loading");
+    private void showGenericLoadingDialog() {
+        genericLoadingDialog = new GenericLoadingDialog(this,
+                getLayoutInflater(),
+                "Loggin in")
+                .create();
+        genericLoadingDialog.show();
     }
 
-    private void dismissGenericLoadingDialog(){
+    private void dismissGenericLoadingDialog() {
         genericLoadingDialog.dismiss();
+    }
+
+    @Override
+    public void genericMessageDialogOkBtnClick() {
+        genericMessageDialog.dismiss();
     }
 }

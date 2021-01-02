@@ -8,13 +8,9 @@ data class Route(
         @PrimaryKey
         val id: Int,
         val name: String,
+        val selected: Boolean = true,
+        val addressIdList: String = "{\"idList\":[]}",
+        val driveIdList: String = "{\"idList\":[]}",
+        val creationDate: Long = System.currentTimeMillis()
 ) {
-    var selected: Boolean = true
-    var addressIdList: String = "{\"idList\":[]}"
-    var driveIdList: String = "{\"idList\":[]}"
-    var creationDate: Long = System.currentTimeMillis()
-
-//    fun copyRoute(route: Route, name: String): Route{
-//
-//    }
 }

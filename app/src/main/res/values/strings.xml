@@ -41,7 +41,7 @@
     <string name="dialog_delete_btn">Delete</string>
     <string name="dialog_delete_route_title">Delete route</string>
     <string name="dialog_are_you_sure_you_want_to_delete">Are you sure you want to delete</string>
-    <string name="dialog_route_name">route name</string>
+    <string name="dialog_route_name">Route name</string>
     <string name="dialog_new_route_title">New Route</string>
     <string name="dialog_rename_route_title">Rename route</string>
 

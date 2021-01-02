@@ -139,48 +139,53 @@
                 app:layout_constraintStart_toStartOf="parent">
 
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/create_new_route_btn"
-                    style="?android:attr/borderlessButtonStyle"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
-                    android:layout_marginBottom="16dp"
-                    android:background="@drawable/navigation_view_footer_btn_bg"
-                    android:drawableStart="@drawable/ic_add_new_route"
-                    android:drawablePadding="8dp"
-                    android:gravity="left|center_vertical"
+                    android:layout_marginBottom="8dp"
                     android:paddingStart="8dp"
                     android:text="@string/navigation_view_new_route_btn"
+                    android:textAlignment="textStart"
                     android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                     android:textColor="@color/colorLightBlack"
-                    android:textStyle="normal"
+                    app:icon="@drawable/ic_add_new_route"
+                    app:iconPadding="16dp"
+                    app:iconTint="@color/colorLightBlack"
                     app:layout_constraintBottom_toTopOf="@+id/logout_btn"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="1.0"
+                    app:rippleColor="@color/colorNavigationViewBtnPress" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/logout_btn"
-                    style="?android:attr/borderlessButtonStyle"
+                    style="@style/Widget.MaterialComponents.Button.TextButton.Icon"
                     android:layout_width="0dp"
-                    android:layout_height="40dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
                     android:layout_marginBottom="8dp"
-                    android:background="@drawable/navigation_view_footer_btn_bg"
-                    android:drawableStart="@drawable/ic_logout"
-                    android:drawablePadding="8dp"
-                    android:gravity="left|center_vertical"
                     android:paddingStart="8dp"
                     android:text="@string/navigation_view_logout_btn"
+                    android:textAlignment="textStart"
                     android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
                     android:textColor="@color/colorLightBlack"
+                    app:icon="@drawable/ic_logout"
+                    app:iconPadding="16dp"
+                    app:iconTint="@color/colorLightBlack"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:rippleColor="@color/colorNavigationViewBtnPress" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

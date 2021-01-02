@@ -2,16 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/dialog_test_bg">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/message_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
         android:text="@string/dialog_message_tv"
         android:textAlignment="center"
         android:textColor="@color/colorBlack"
@@ -20,22 +19,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/ok_btn"
-        style="?android:attr/borderlessButtonStyle"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/dialog_ok_btn_bg"
         android:text="@string/dialog_ok_btn"
         android:textAllCaps="false"
         android:textColor="@color/colorWhite"
+        app:backgroundTint="@color/colorPrimary"
+        app:cornerRadius="25dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/message_tv" />
+        app:layout_constraintTop_toBottomOf="@+id/message_tv"
+        app:rippleColor="@color/colorRouteSelectedBackground" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

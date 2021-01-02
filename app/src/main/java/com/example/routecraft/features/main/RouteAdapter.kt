@@ -2,7 +2,6 @@ package com.example.routecraft.features.main
 
 import android.graphics.Color
 import android.graphics.Typeface
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -16,8 +15,8 @@ class RouteAdapter(private val listener: Listener) : ListAdapter<Route, RouteAda
 
     interface Listener {
         fun routeClicked(route: Route)
-        fun openRenameRouteDialog(route: Route)
-        fun openDeleteRouteDialog(route: Route)
+        fun renameRouteBtnClicked(route: Route)
+        fun deleteRouteBtnClicked(route: Route)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RouteViewHolder {
@@ -34,7 +33,7 @@ class RouteAdapter(private val listener: Listener) : ListAdapter<Route, RouteAda
 
         init {
             binding.apply {
-                root.setOnClickListener {
+                container.setOnClickListener {
                     val position = adapterPosition
                     if(position != RecyclerView.NO_POSITION){
                         listener.routeClicked(getItem(position))
@@ -49,11 +48,11 @@ class RouteAdapter(private val listener: Listener) : ListAdapter<Route, RouteAda
                         popupMenu.setOnMenuItemClickListener {item ->
                             when (item.itemId) {
                                 R.id.action_popup_rename -> {
-                                    listener.openRenameRouteDialog(getItem(position))
+                                    listener.renameRouteBtnClicked(getItem(position))
                                     true
                                 }
                                 R.id.action_popup_delete -> {
-                                    listener.openDeleteRouteDialog(getItem(position))
+                                    listener.deleteRouteBtnClicked(getItem(position))
                                     true
                                 }
                                 else -> false
@@ -66,7 +65,6 @@ class RouteAdapter(private val listener: Listener) : ListAdapter<Route, RouteAda
         }
 
         fun bind(route: Route){
-            Log.d("DEBUG_TAG", "bind");
             binding.routeNameTv.text = route.name
 
             if (route.selected) {
@@ -91,24 +89,10 @@ class RouteAdapter(private val listener: Listener) : ListAdapter<Route, RouteAda
 
     class DiffCallback : DiffUtil.ItemCallback<Route>(){
 
-        override fun areItemsTheSame(oldItem: Route, newItem: Route): Boolean {
-            val same: Boolean = oldItem.id == newItem.id
-//            Log.d("DEBUG_TAG", "- areItemsTheSame: $same");
-//            Log.d("DEBUG_TAG", "old item name: "+ oldItem.name);
-//            Log.d("DEBUG_TAG", "new item name: " + newItem.name);
-            return oldItem.id == newItem.id
-        }
+        override fun areItemsTheSame(oldItem: Route, newItem: Route) =
+                oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Route, newItem: Route): Boolean {
-            val same: Boolean = oldItem == newItem;
-            Log.d("DEBUG_TAG", "* areContentsTheSame: $same")
-            Log.d("DEBUG_TAG", "old item name: "+ oldItem.name);
-            Log.d("DEBUG_TAG", "old item selected: "+ oldItem.selected)
-            Log.d("DEBUG_TAG", "old item creation: "+ oldItem.creationDate)
-            Log.d("DEBUG_TAG", "new item name: " + newItem.name)
-            Log.d("DEBUG_TAG", "new item selected: " + newItem.selected)
-            Log.d("DEBUG_TAG", "new item creation: " + newItem.creationDate)
-            return oldItem == newItem
-        }
+        override fun areContentsTheSame(oldItem: Route, newItem: Route) =
+                oldItem == newItem
     }
 }

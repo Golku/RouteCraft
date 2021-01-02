@@ -1,81 +1,54 @@
 package com.example.routecraft.features.dialogs;
 
-import android.app.Dialog;
 import android.content.Context;
-import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.routecraft.R;
+import com.example.routecraft.databinding.DialogRenameRouteBinding;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class RenameRouteDialog extends DialogFragment {
-
-    private Listener listener;
+public class RenameRouteDialog extends MaterialAlertDialogBuilder {
 
     private InputMethodManager imm;
 
     public interface Listener {
-        void onRenameRoute(String routeName);
+        void onRenameRoute(String routeName, boolean cancel);
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public RenameRouteDialog(@NonNull Context context, LayoutInflater inflater, String routeName) {
+        super(context);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_rename_route, null);
+        DialogRenameRouteBinding binding = DialogRenameRouteBinding.inflate(inflater);
+        Listener listener = (Listener) context;
 
-        String routeName = "";
+        binding.routeNameEt.setText(routeName);
+        binding.routeNameEt.setSelectAllOnFocus(true);
+        binding.routeNameEt.requestFocus();
 
-        if (getArguments() != null) {
-            routeName = getArguments().getString("ROUTE_NAME");
-        }
+        imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        EditText routeNameEt = view.findViewById(R.id.route_name_et);
-        Button okBtn = view.findViewById(R.id.ok_btn);
-        Button cancelBtn = view.findViewById(R.id.cancel_btn);
-
-        routeNameEt.setText(routeName);
-        routeNameEt.setSelectAllOnFocus(true);
-        routeNameEt.requestFocus();
-
-        imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        okBtn.setOnClickListener(view1 -> {
-            if(!routeNameEt.getText().toString().trim().isEmpty()){
-                listener.onRenameRoute(routeNameEt.getText().toString());
-                imm.hideSoftInputFromWindow(routeNameEt.getWindowToken(), 0);
-                dismiss();
+        binding.okBtn.setOnClickListener(view -> {
+            if(!binding.routeNameEt.getText().toString().trim().isEmpty()){
+                listener.onRenameRoute(binding.routeNameEt.getText().toString(), false);
+                imm.hideSoftInputFromWindow(binding.routeNameEt.getWindowToken(), 0);
             }
         });
-        cancelBtn.setOnClickListener(view12 -> {
-            imm.hideSoftInputFromWindow(routeNameEt.getWindowToken(), 0);
-            dismiss();
+        binding.cancelBtn.setOnClickListener(view -> {
+            imm.hideSoftInputFromWindow(binding.routeNameEt.getWindowToken(), 0);
+            listener.onRenameRoute("", true);
         });
 
-        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        this.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.dialog_bg, null));
+        this.setView(binding.getRoot());
 
-        builder.setView(view);
-
-        return builder.create();
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            listener = (Listener) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() +
-                    " must implement Listener");
-        }
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            imm.showSoftInput(binding.routeNameEt, 0);
+        }, 150);
     }
 }

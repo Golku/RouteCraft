@@ -1,38 +1,23 @@
 package com.example.routecraft.features.dialogs;
 
-import android.app.Dialog;
-import android.os.Bundle;
+import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.routecraft.R;
+import com.example.routecraft.databinding.DialogGenericLoadingBinding;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class GenericLoadingDialog extends DialogFragment {
+public class GenericLoadingDialog extends MaterialAlertDialogBuilder {
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_generic_loading, null);
-
-        String message = "";
-
-        if (getArguments() != null) {
-            message = getArguments().getString("DIALOG_MESSAGE_KEY");
-        }
-
-        TextView loadingTv = view.findViewById(R.id.loading_tv);
-        loadingTv.setText(message+"…");
-
-        builder.setView(view);
-        return builder.create();
+    public GenericLoadingDialog(@NonNull Context context, LayoutInflater inflater, String message) {
+        super(context);
+        DialogGenericLoadingBinding binding = DialogGenericLoadingBinding.inflate(inflater);
+        binding.loadingTv.setText(message);
+        this.setCancelable(false);
+        this.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.dialog_bg, null));
+        this.setView(binding.getRoot());
     }
-
 }

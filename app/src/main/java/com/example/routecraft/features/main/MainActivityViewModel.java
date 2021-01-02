@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 import com.example.routecraft.data.pojos.IdHolder;
 import com.example.routecraft.data.pojos.Route;
 import com.example.routecraft.data.pojos.Session;
+import com.example.routecraft.features.shared.ItemManager;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -31,11 +32,14 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 
     private Gson gson;
 
+    private ItemManager itemManager;
+
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
         routeRepository = new RouteRepository(application, this);
         allRoutes = routeRepository.getAllRoutes();
         gson = new Gson();
+        itemManager = new ItemManager();
     }
 
     public interface Listener {
@@ -50,47 +54,28 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
     public void loadRoute(Route route){
 
         if(route == null){
-            Log.d(DEBUG_TAG, "Route is null");
-            currentRoute = new Route(1, "My first route");
+            currentRoute = itemManager.createRoute(1, "My first route");
         }else{
 
-            Log.d(DEBUG_TAG, "Loading route");
-            debugRoute(route);
-
             if(currentRoute != null){
-
-//                currentRoute.setSelected(false);
-
-                Route updatedRoute = currentRoute.copy(currentRoute.getId(), currentRoute.getName());
-                updatedRoute.setSelected(false);
-
-                Log.d(DEBUG_TAG, "Deselected");
-                debugRoute(updatedRoute);
-
+                Route updatedRoute = itemManager.copyRoute(currentRoute, false);
                 updateRoute(updatedRoute);
             }
 
             currentRoute = route;
 
             if(!currentRoute.getSelected()){
-
-                //currentRoute.setSelected(true);
-
-                Route updatedRoute = currentRoute.copy(currentRoute.getId(), currentRoute.getName());
-                updatedRoute.setSelected(true);
-
-                Log.d(DEBUG_TAG, "Selecting");
-                debugRoute(updatedRoute);
-
+                Route updatedRoute = itemManager.copyRoute(currentRoute, true);
+                currentRoute = updatedRoute;
                 updateRoute(updatedRoute);
             }
         }
 
         view.getSession().setCurrentRoute(currentRoute.getId());
 
-//        Log.d(DEBUG_TAG, "Route ID: " + currentRoute.getId());
-//        Log.d(DEBUG_TAG, "Route Name: " + currentRoute.getName());
-//        Log.d(DEBUG_TAG, "Route Selected: " + currentRoute.getSelected());
+        Log.d(DEBUG_TAG, "Route ID: " + currentRoute.getId());
+        Log.d(DEBUG_TAG, "Route Name: " + currentRoute.getName());
+        Log.d(DEBUG_TAG, "Route Selected: " + currentRoute.getSelected());
 
         Gson gson = new Gson();
         IdHolder addressIdHolder = gson.fromJson(currentRoute.getAddressIdList(), IdHolder.class);
@@ -105,16 +90,6 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 //        view.updateFragmentInfo();
     }
 
-    public void createNewRoute(String routeName){
-        int newRouteId = view.getSession().getNewRouteId();
-//        Log.d(DEBUG_TAG, "Creating new route with id: " + newRouteId);
-//        Log.d(DEBUG_TAG, "Creating new route with name: " + routeName);
-
-        Route route = new Route(newRouteId, routeName);
-        insertRoute(route);
-        loadRoute(route);
-    }
-
     private void debugRoute(Route route){
         Log.d(DEBUG_TAG, "Id: " + route.getId());
         Log.d(DEBUG_TAG, "Name: " + route.getName());
@@ -124,13 +99,19 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
         Log.d(DEBUG_TAG, "Creation time: " + route.getCreationDate());
     }
 
+    public void createNewRoute(String routeName){
+        int newRouteId = view.getSession().getNewRouteId();
+        Route route = itemManager.createRoute(newRouteId, routeName);
+        insertRoute(route);
+        loadRoute(route);
+    }
+
     public void renameRoute(Route route, String routeName){
-        Log.d(DEBUG_TAG, "renaming route");
-//        debugRoute(route.co);
-//        Route updatedRoute = route.copyRoute(route, routeName);
-        Log.d(DEBUG_TAG, "renaming");
-//        debugRoute(updatedRoute);
-//        updateRoute(updatedRoute);
+        Route updatedRoute = itemManager.copyRoute(route, routeName);
+        if(currentRoute.getId() == updatedRoute.getId()){
+            currentRoute = updatedRoute;
+        }
+        updateRoute(updatedRoute);
     }
 
     public void updateRouteAddressIdList(List<Integer> addressIdLIst){
@@ -142,7 +123,7 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 
         String addressIdListJson = gson.toJson(idHolder);
 
-        currentRoute.setAddressIdList(addressIdListJson);
+//        currentRoute.setAddressIdList(addressIdListJson);
 
         updateRoute(currentRoute);
     }
@@ -156,19 +137,19 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 
         String driveIdListJson = gson.toJson(idHolder);
 
-        currentRoute.setDriveIdList(driveIdListJson);
+//        currentRoute.setDriveIdList(driveIdListJson);
 
         updateRoute(currentRoute);
-    }
-
-    @Override
-    public void onRouteRetrieved(Route route) {
-        loadRoute(route);
     }
 
     public void getRoute(int routeId){
         Log.d(DEBUG_TAG, "Getting route with id: " + routeId);
         routeRepository.get(routeId);
+    }
+
+    @Override
+    public void onRouteRetrieved(Route route) {
+        loadRoute(route);
     }
 
     public void insertRoute(Route route){

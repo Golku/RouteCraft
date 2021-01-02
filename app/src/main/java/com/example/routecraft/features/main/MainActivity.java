@@ -1,7 +1,9 @@
 package com.example.routecraft.features.main;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -9,10 +11,17 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.example.routecraft.R;
@@ -39,13 +48,19 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
 
     private Session session;
 
+    private ActivityMainBinding binding;
+
     private MainActivityViewModel viewModel;
     private SharedViewModel sharedViewModel;
+
     private NavController navController;
-    private ActivityMainBinding binding;
     private AppBarConfiguration appBarConfiguration;
 
     private RouteAdapter routeAdapter;
+
+    private AlertDialog createNewRouteDialog;
+    private AlertDialog renameRouteDialog;
+    private AlertDialog deleteRouteDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,16 +82,8 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
         binding.routeListRv.setAdapter(routeAdapter);
         binding.routeListRv.setHasFixedSize(true);
 
-        viewModel.getAllRoutes().observe(this, new Observer<List<Route>>() {
-            @Override
-            public void onChanged(List<Route> routes) {
-                Log.d(DEBUG_TAG, "Submitting new list");
-
-//                routeAdapter = new RouteAdapter(MainActivity.this);
-//                binding.routeListRv.setAdapter(routeAdapter);
-
-                routeAdapter.submitList(routes);
-            }
+        viewModel.getAllRoutes().observe(this, routes -> {
+            routeAdapter.submitList(routes);
         });
 
         setOnClickListeners();
@@ -128,63 +135,81 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
 
     @Override
     public void routeClicked(Route route) {
-        Log.d(DEBUG_TAG, "Route clicked, route ID: " + route.getId());
-        //binding.drawerLayout.closeDrawer(GravityCompat.START);
-        if(viewModel.getCurrentRoute().getId() == route.getId()){
-            Log.d(DEBUG_TAG, "This route is already loaded");
+        binding.drawerLayout.closeDrawer(GravityCompat.START);
+        if (viewModel.getCurrentRoute().getId() == route.getId()) {
             return;
         }
+        routeListScrollToTop();
         viewModel.loadRoute(route);
     }
 
     private void openNewRouteDialog() {
-        DialogFragment createNewRouteDialog = new CreateNewRouteDialog();
-        createNewRouteDialog.setCancelable(false);
-        createNewRouteDialog.show(getSupportFragmentManager(), "create route");
+        createNewRouteDialog = new CreateNewRouteDialog(this,
+                getLayoutInflater())
+                .create();
+        createNewRouteDialog.show();
     }
 
     @Override
-    public void onNewRouteName(String routeName) {
-//        binding.drawerLayout.closeDrawer(GravityCompat.START);
+    public void onCreateRoute(String routeName, boolean cancel) {
+        createNewRouteDialog.dismiss();
+        if(cancel){
+            return;
+        }
+        binding.drawerLayout.closeDrawer(GravityCompat.START);
+        routeListScrollToTop();
         viewModel.createNewRoute(routeName);
     }
 
     @Override
-    public void openRenameRouteDialog(@NonNull Route route) {
-        //Log.d(DEBUG_TAG, "Rename dialog");
+    public void renameRouteBtnClicked(@NonNull Route route) {
         viewModel.setRouteToModify(route);
-        Bundle bundle = new Bundle();
-        bundle.putString("ROUTE_NAME", route.getName());
-        DialogFragment renameRouteDialog = new RenameRouteDialog();
-        renameRouteDialog.setArguments(bundle);
-        renameRouteDialog.setCancelable(false);
-        renameRouteDialog.show(getSupportFragmentManager(), "rename route");
+        renameRouteDialog = new RenameRouteDialog(this,
+                getLayoutInflater(),
+                route.getName())
+                .create();
+        renameRouteDialog.show();
     }
 
     @Override
-    public void onRenameRoute(String routeName) {
+    public void onRenameRoute(String routeName, boolean cancel) {
+        renameRouteDialog.dismiss();
+        if(cancel){
+            return;
+        }
         viewModel.renameRoute(viewModel.getRouteToModify(), routeName);
     }
 
     @Override
-    public void openDeleteRouteDialog(@NonNull Route route) {
+    public void deleteRouteBtnClicked(@NonNull Route route) {
 
-        if(viewModel.getAllRoutes().getValue() != null && viewModel.getAllRoutes().getValue().size() == 1){
+        if (viewModel.getAllRoutes().getValue() != null && viewModel.getAllRoutes().getValue().size() == 1) {
             Toast.makeText(this, "Can't delete only route", Toast.LENGTH_SHORT).show();
             return;
         }
 
         viewModel.setRouteToModify(route);
-        Bundle bundle = new Bundle();
-        bundle.putString("ROUTE_NAME", route.getName());
-        DialogFragment deleteRouteDialog = new DeleteRouteDialog();
-        deleteRouteDialog.setArguments(bundle);
-        deleteRouteDialog.show(getSupportFragmentManager(), "delete route");
+
+        deleteRouteDialog = new DeleteRouteDialog(this,
+                getLayoutInflater(),
+                route.getName())
+                .create();
+        deleteRouteDialog.show();
     }
 
     @Override
-    public void onDeleteRoute() {
+    public void onDeleteRoute(boolean cancel) {
+        deleteRouteDialog.dismiss();
+        if(cancel){
+            return;
+        }
         viewModel.deleteRoute(viewModel.getRouteToModify());
+    }
+
+    private void routeListScrollToTop() {
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            binding.routeListRv.scrollToPosition(0);
+        }, 500);
     }
 
     @Override

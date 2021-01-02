@@ -1,43 +1,30 @@
 package com.example.routecraft.features.dialogs;
 
-import android.app.Dialog;
-import android.os.Bundle;
+import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.example.routecraft.R;
+import com.example.routecraft.databinding.DialogGenericMessageBinding;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-public class GenericMessageDialog extends DialogFragment {
+public class GenericMessageDialog extends MaterialAlertDialogBuilder {
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public interface Listener{
+        void genericMessageDialogOkBtnClick();
+    }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_generic_message, null);
-
-        String message = "";
-
-        if (getArguments() != null) {
-            message = getArguments().getString("DIALOG_MESSAGE_KEY");
-        }
-
-        TextView messageTv = view.findViewById(R.id.message_tv);
-        Button okBtn = view.findViewById(R.id.ok_btn);
-
-        messageTv.setText(message);
-        okBtn.setOnClickListener(view1 -> dismiss());
-
-        builder.setView(view);
-
-        return builder.create();
+    public GenericMessageDialog(@NonNull Context context, LayoutInflater inflater, String message) {
+        super(context);
+        DialogGenericMessageBinding binding = DialogGenericMessageBinding.inflate(inflater);
+        Listener listener = (Listener) context;
+        binding.messageTv.setText(message);
+        binding.okBtn.setOnClickListener(view -> {
+            listener.genericMessageDialogOkBtnClick();
+        });
+        this.setBackground(ResourcesCompat.getDrawable(context.getResources(), R.drawable.dialog_bg, null));
+        this.setView(binding.getRoot());
     }
 }

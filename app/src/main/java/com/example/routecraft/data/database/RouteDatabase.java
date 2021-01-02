@@ -12,6 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.routecraft.data.pojos.Address;
 import com.example.routecraft.data.pojos.Drive;
 import com.example.routecraft.data.pojos.Route;
+import com.example.routecraft.features.shared.ItemManager;
 
 @Database(entities = {Route.class, Address.class, Drive.class}, version = 1)
 public abstract class RouteDatabase extends RoomDatabase{
@@ -50,8 +51,8 @@ public abstract class RouteDatabase extends RoomDatabase{
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Route route = new Route(1, "My first route");
-            routeDao.insert(route);
+            ItemManager itemManager = new ItemManager();
+            routeDao.insert(itemManager.createRoute(1, "My first route"));
             return null;
         }
     }

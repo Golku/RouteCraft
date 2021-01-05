@@ -1,0 +1,30 @@
+package com.example.routecraft.data.pojos
+
+data class Properties(
+		val id: String,
+		val gid: String,
+		val layer: String,
+		val source: String,
+		val source_id: String,
+		val name: String,
+		val housenumber: Int,
+		val street: String,
+		val postalcode: String,
+		val distance: Double,
+		val accuracy: String,
+		val country: String,
+		val country_gid: String,
+		val country_a: String,
+		val region: String,
+		val region_gid: String,
+		val region_a: String,
+		val locality: String,
+		val locality_gid: String,
+		val borough: String,
+		val borough_gid: String,
+		val neighbourhood: String,
+		val neighbourhood_gid: String,
+		val continent: String,
+		val continent_gid: String,
+		val label: String
+)

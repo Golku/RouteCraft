@@ -7,46 +7,24 @@
     android:layout_height="match_parent"
     tools:context=".features.addressList.AddressListFragment">
 
-    <TextView
-        android:id="@+id/mod_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Address list"
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_address_btn"
+        style="@style/Widget.MaterialComponents.FloatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:text="Add address"
-        app:layout_constraintEnd_toStartOf="@+id/add_address_with_autocomplete"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mod_tv" />
-
-    <Button
-        android:id="@+id/add_address_with_autocomplete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:text="Add with autocomplete"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/add_address_btn"
-        app:layout_constraintTop_toBottomOf="@+id/mod_tv" />
-
-    <Button
-        android:id="@+id/show_address_details_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="72dp"
-        android:text="Show address details"
-        app:layout_constraintEnd_toEndOf="@+id/add_address_with_autocomplete"
-        app:layout_constraintHorizontal_bias="0.524"
-        app:layout_constraintStart_toStartOf="@+id/add_address_btn"
-        app:layout_constraintTop_toBottomOf="@+id/add_address_with_autocomplete" />
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:src="@drawable/ic_add_white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

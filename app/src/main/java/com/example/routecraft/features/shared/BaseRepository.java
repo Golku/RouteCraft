@@ -1,6 +1,7 @@
 package com.example.routecraft.features.shared;
 
-import com.example.routecraft.data.api.ApiService;
+import com.example.routecraft.data.api.OpenRouteApiService;
+import com.example.routecraft.data.api.RouteCraftApiService;
 import com.example.routecraft.data.database.DatabaseService;
 import com.google.gson.Gson;
 
@@ -19,13 +20,22 @@ public abstract class BaseRepository {
                 .build();
     }
 
-    protected ApiService createApiService(){
+    protected RouteCraftApiService createRouteCraftApiService(){
         Retrofit retrofit = new Retrofit.Builder()
                 .client(createOkHttpClient())
                 .baseUrl("http://212.187.39.139:8080/RouteApi_war/webapi/")
                 .addConverterFactory(GsonConverterFactory.create(new Gson()))
                 .build();
-        return retrofit.create(ApiService.class);
+        return retrofit.create(RouteCraftApiService.class);
+    }
+
+    protected OpenRouteApiService createOpenRouteApiService(){
+        Retrofit retrofit = new Retrofit.Builder()
+                .client(new OkHttpClient())
+                .baseUrl("https://api.openrouteservice.org/")
+                .addConverterFactory(GsonConverterFactory.create(new Gson()))
+                .build();
+        return retrofit.create(OpenRouteApiService.class);
     }
 
     protected DatabaseService createDatabaseService(){

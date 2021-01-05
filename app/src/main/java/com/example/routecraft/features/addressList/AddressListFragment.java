@@ -15,10 +15,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.Navigation;
 
-import com.example.routecraft.NavGraphDirections;
-import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.databinding.FragmentAddressListBinding;
-import com.example.routecraft.features.login.LoginActivity;
 import com.example.routecraft.features.shared.SharedViewModel;
 
 public class AddressListFragment extends Fragment {
@@ -48,12 +45,8 @@ public class AddressListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
-        binding.addAddressBtn.setOnClickListener(view12 -> {
-            NavDirections action = AddressListFragmentDirections.actionAddressListFragmentToAddAddressFragment();
-            navController.navigate(action);
-        });
-        binding.showAddressDetailsBtn.setOnClickListener(view1 -> {
-            NavDirections action = NavGraphDirections.actionGlobalAddressDetailsFragment();
+        binding.addAddressBtn.setOnClickListener(view1 -> {
+            NavDirections action = AddressListFragmentDirections.actionAddressListFragmentToAddAddressWithAutocompleteFragment();
             navController.navigate(action);
         });
     }
@@ -62,7 +55,6 @@ public class AddressListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
-        binding.modTv.setText(sharedViewModel.getText());
     }
 
     @Override

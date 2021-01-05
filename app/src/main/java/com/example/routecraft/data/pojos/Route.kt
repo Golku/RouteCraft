@@ -12,5 +12,4 @@ data class Route(
         val addressIdList: String = "{\"idList\":[]}",
         val driveIdList: String = "{\"idList\":[]}",
         val creationDate: Long = System.currentTimeMillis()
-) {
-}
+)

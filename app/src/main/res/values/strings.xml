@@ -23,8 +23,8 @@
 
     <string name="login_activity_main_text">Rᴏᴜᴛᴇ Cʀᴀғᴛ</string>
     <string name="login_activity_login_btn">Login</string>
-    <string name="login_activity_password_et_hint">password</string>
-    <string name="login_activity_username_et_hint">username</string>
+    <string name="login_activity_password_et_hint">Password</string>
+    <string name="login_activity_username_et_hint">Username</string>
     <string name="login_activity_stay_logged_in_check_box">Stay Logged In</string>
     <string name="login_activity_remember_username_check_box">Remember Username</string>
 

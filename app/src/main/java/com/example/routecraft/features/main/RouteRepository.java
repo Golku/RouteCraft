@@ -17,15 +17,15 @@ public class RouteRepository {
     private LiveData<List<Route>> allRoutes;
     private Listener listener;
 
+    public interface Listener{
+        void onRouteRetrieved(Route route);
+    }
+
     public RouteRepository(Application application, Listener listener) {
         RouteDatabase routeDatabase = RouteDatabase.getInstance(application);
         routeDao = routeDatabase.routeDao();
         allRoutes = routeDao.getAllRoutes();
         this.listener = listener;
-    }
-
-    public interface Listener{
-        void onRouteRetrieved(Route route);
     }
 
     public void get(int routeId){ new GetRouteAsyncTask(routeDao, listener).execute(routeId);}

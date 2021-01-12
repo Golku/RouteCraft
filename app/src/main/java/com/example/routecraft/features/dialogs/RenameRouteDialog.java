@@ -15,8 +15,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class RenameRouteDialog extends MaterialAlertDialogBuilder {
 
-    private InputMethodManager imm;
-
     public interface Listener {
         void onRenameRoute(String routeName, boolean cancel);
     }
@@ -31,7 +29,7 @@ public class RenameRouteDialog extends MaterialAlertDialogBuilder {
         binding.routeNameEt.setSelectAllOnFocus(true);
         binding.routeNameEt.requestFocus();
 
-        imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         binding.okBtn.setOnClickListener(view -> {
             if(!binding.routeNameEt.getText().toString().trim().isEmpty()){

@@ -123,6 +123,11 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
         genericMessageDialog.show();
     }
 
+    @Override
+    public void genericMessageDialogOkBtnClick() {
+        genericMessageDialog.dismiss();
+    }
+
     private void showGenericLoadingDialog() {
         genericLoadingDialog = new GenericLoadingDialog(this,
                 getLayoutInflater(),
@@ -133,10 +138,5 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
 
     private void dismissGenericLoadingDialog() {
         genericLoadingDialog.dismiss();
-    }
-
-    @Override
-    public void genericMessageDialogOkBtnClick() {
-        genericMessageDialog.dismiss();
     }
 }

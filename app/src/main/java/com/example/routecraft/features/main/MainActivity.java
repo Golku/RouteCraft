@@ -4,24 +4,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
-import androidx.fragment.app.DialogFragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.recyclerview.widget.LinearSmoothScroller;
-import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.example.routecraft.R;
@@ -35,7 +28,6 @@ import com.example.routecraft.features.login.LoginActivity;
 import com.example.routecraft.features.shared.SharedViewModel;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements MainActivityViewModel.Listener,
@@ -56,11 +48,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     private NavController navController;
     private AppBarConfiguration appBarConfiguration;
 
-    private RouteAdapter routeAdapter;
-
     private AlertDialog createNewRouteDialog;
     private AlertDialog renameRouteDialog;
     private AlertDialog deleteRouteDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,16 +69,13 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
 
         binding.usernameTv.setText(session.getUsername());
 
-        routeAdapter = new RouteAdapter(this);
+        RouteAdapter routeAdapter = new RouteAdapter(this);
         binding.routeListRv.setAdapter(routeAdapter);
         binding.routeListRv.setHasFixedSize(true);
 
-        viewModel.getAllRoutes().observe(this, routes -> {
-            routeAdapter.submitList(routes);
-        });
+        viewModel.getAllRoutes().observe(this, routeAdapter::submitList);
 
         setOnClickListeners();
-
         viewModel.getRoute(session.getCurrentRoute());
     }
 

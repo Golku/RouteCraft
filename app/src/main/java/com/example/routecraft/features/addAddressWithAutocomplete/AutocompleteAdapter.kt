@@ -11,8 +11,8 @@ import com.example.routecraft.databinding.ItemAutocompletePredictionBinding
 class AutocompleteAdapter(private val listener: Listener) : ListAdapter<AutocompletePrediction, AutocompleteAdapter.PredictionViewHolder>(DiffCallback()) {
 
     interface Listener {
-        fun predictionClicked()
-        fun predictionSelected()
+        fun predictionClick(prediction: AutocompletePrediction)
+        fun predictionSelected(prediction: AutocompletePrediction)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PredictionViewHolder {
@@ -27,9 +27,26 @@ class AutocompleteAdapter(private val listener: Listener) : ListAdapter<Autocomp
 
     inner class PredictionViewHolder(private val binding: ItemAutocompletePredictionBinding, private val listener: Listener) : RecyclerView.ViewHolder(binding.root) {
 
+        init {
+            binding.apply {
+                infoHolder.setOnClickListener {
+                    val position = adapterPosition
+                    if(position != RecyclerView.NO_POSITION){
+                        listener.predictionClick(getItem(position))
+                    }
+                }
+                predictionBtn.setOnClickListener {
+                    val position = adapterPosition
+                    if(position != RecyclerView.NO_POSITION){
+                        listener.predictionSelected(getItem(position))
+                    }
+                }
+            }
+        }
+
         fun bind(prediction: AutocompletePrediction) {
-            binding.streetNameTv.text = prediction.streetName
-            binding.cityNameTv.text = prediction.cityName
+            binding.streetName.text = prediction.streetName
+            binding.cityName.text = prediction.cityName
         }
     }
 

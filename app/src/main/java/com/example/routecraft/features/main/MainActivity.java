@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.routecraft.R;
@@ -124,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     @Override
     public void routeClicked(Route route) {
         binding.drawerLayout.closeDrawer(GravityCompat.START);
-        if (viewModel.getCurrentRoute().getId() == route.getId()) {
+        if (viewModel.getCurrentRoute().getRouteId() == route.getRouteId()) {
             return;
         }
         routeListScrollToTop();

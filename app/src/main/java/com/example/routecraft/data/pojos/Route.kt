@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity
 data class Route(
         @PrimaryKey
-        val id: Int,
+        val routeId: Int,
         val name: String,
         val selected: Boolean = true,
         val addressIdList: String = "{\"idList\":[]}",

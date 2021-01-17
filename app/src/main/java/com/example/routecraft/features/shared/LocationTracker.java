@@ -5,6 +5,9 @@ import android.content.pm.PackageManager;
 import android.location.LocationManager;
 import android.os.Looper;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+
 import com.example.routecraft.data.pojos.LatLng;
 import com.example.routecraft.features.main.MainActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;

@@ -13,7 +13,8 @@
     <color name="colorStreetDark">#1f2022</color>
     <color name="colorLightBlack">#515767</color>
     <color name="colorBorderLine">#ced2de</color>
-    <color name="colorWhiteGrey">#f3f4f8</color>
     <color name="colorNavigationViewBtnPress">#e0e0e0</color>
     <color name="colorRouteSelectedBackground">#F5F7FF</color>
+    <color name="colorTest">#FF9800</color>
+
 </resources>

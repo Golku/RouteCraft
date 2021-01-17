@@ -12,9 +12,10 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.routecraft.data.pojos.Address;
 import com.example.routecraft.data.pojos.Drive;
 import com.example.routecraft.data.pojos.Route;
+import com.example.routecraft.data.pojos.RouteAddressCrossRef;
 import com.example.routecraft.features.shared.ItemManager;
 
-@Database(entities = {Route.class, Address.class, Drive.class}, version = 1)
+@Database(entities = {Route.class, Address.class, RouteAddressCrossRef.class, Drive.class}, version = 1)
 public abstract class RouteDatabase extends RoomDatabase{
 
     private static RouteDatabase instance;

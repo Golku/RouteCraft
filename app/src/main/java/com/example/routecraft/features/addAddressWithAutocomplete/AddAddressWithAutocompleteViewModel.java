@@ -1,9 +1,12 @@
 package com.example.routecraft.features.addAddressWithAutocomplete;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -36,6 +39,7 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
     private Runnable autocompletePredictionQue;
 
     private String queryText;
+    private boolean showingNewAddressContainer;
 
     private int userId;
     private int sessionId;
@@ -43,7 +47,13 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
     private LatLng userLocation;
 
     interface Listener {
-        void showProgressBar(boolean show);
+        void setHelperTextVisibility(boolean visible);
+        void setPredictionListVisibility(int visible);
+        void setNoResultsContainerVisibility(boolean visible);
+        void setNewAddressContainerVisibility(boolean visible);
+        void setFetchingAddressContainerVisibility(boolean visible);
+        void fetchingNewAddress(String street, String city);
+        void newAddressAdded(String street, String city);
         void setPredictionsList(List<AutocompletePrediction> predictionsList);
     }
 
@@ -58,6 +68,43 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
         sessionId = idGenerator.nextInt(1000000);
 
         autocompletePredictionQue = this::getPrediction;
+    }
+
+    public void setListener(Listener listener) {
+        this.listener = listener;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void onPredictionClick(AutocompletePrediction prediction) {
+        AddressRequest request = new AddressRequest(
+                userId,
+                sessionId,
+                prediction.getPlaceId(),
+                ""
+        );
+        Log.d(DEBUG_TAG, "Prediction click:" + prediction.getStreetName() + ", " + prediction.getCityName());
+        listener.fetchingNewAddress(prediction.getStreetName(), prediction.getCityName());
+        listener.setPredictionListVisibility(View.INVISIBLE);
+        listener.setNewAddressContainerVisibility(true);
+        showingNewAddressContainer = true;
+        handler.postDelayed(() -> {
+            addressRepository.get(request);
+            sessionId = idGenerator.nextInt(1000000);
+        },500);
+    }
+
+    public void startPredictionQue() {
+        listener.setHelperTextVisibility(false);
+        listener.setPredictionListVisibility(View.INVISIBLE);
+        listener.setNewAddressContainerVisibility(false);
+        listener.setNoResultsContainerVisibility(false);
+        showingNewAddressContainer = false;
+        listener.setFetchingAddressContainerVisibility(true);
+        handler.removeCallbacks(autocompletePredictionQue);
+        handler.postDelayed(autocompletePredictionQue, 1000);
     }
 
     private void getPrediction() {
@@ -80,37 +127,6 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
         autocompleteRepository.get(request);
     }
 
-    public void onPredictionClick(AutocompletePrediction prediction) {
-        AddressRequest request = new AddressRequest(
-                userId,
-                sessionId,
-                prediction.getPlaceId(),
-                ""
-        );
-        addressRepository.get(request);
-        sessionId = idGenerator.nextInt(1000000);
-        Log.d(DEBUG_TAG, "Prediction click:" + prediction.getStreetName() + ", " + prediction.getCityName());
-    }
-
-    public void onPredictionSelected() {
-        handler.removeCallbacks(autocompletePredictionQue);
-        getPrediction();
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-    public void setListener(Listener listener) {
-        this.listener = listener;
-    }
-
-    public void startPredictionQue() {
-        listener.showProgressBar(true);
-        handler.removeCallbacks(autocompletePredictionQue);
-        handler.postDelayed(autocompletePredictionQue, 1000);
-    }
-
     @Override
     public void onUserLocation(LatLng userLocation) {
         Log.d(DEBUG_TAG, "User location updated to: " + userLocation.getLatitude() + ", " + userLocation.getLongitude());
@@ -120,9 +136,10 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
     @Override
     public void autocompleteRequestOnResponse(List<AutocompletePrediction> response) {
 
+        List<AutocompletePrediction> predictionList = new ArrayList<>();
+
         if (response != null) {
 
-            List<AutocompletePrediction> predictionList = new ArrayList<>();
 
             if (response.size() > 0) {
                 predictionList.addAll(response);
@@ -131,19 +148,28 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
             listener.setPredictionsList(predictionList);
         }
 
-        listener.showProgressBar(false);
+        handler.postDelayed(() -> {
+            listener.setFetchingAddressContainerVisibility(false);
+            if(predictionList.size()>0){
+                listener.setPredictionListVisibility(View.VISIBLE);
+            }else{
+                listener.setNoResultsContainerVisibility(true);
+            }
+        }, 250);
     }
 
     @Override
     public void autoCompleteRequestOnFailure(String message) {
         Log.d(DEBUG_TAG, "Failed to get autocomplete predictions: " + message);
-        listener.showProgressBar(false);
+        listener.setFetchingAddressContainerVisibility(false);
     }
 
     @Override
     public void addressRequestOnResponse(Address address) {
         Log.d(DEBUG_TAG, "Address response");
         Log.d(DEBUG_TAG, "Address: " + address.getAddress());
+
+        listener.newAddressAdded(address.getStreet(), address.getPostCode()+" "+ address.getCity());
     }
 
     @Override
@@ -153,5 +179,12 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
 
     public void setQueryText(String queryText) {
         this.queryText = queryText;
+        if(queryText.length()<3){
+            listener.setFetchingAddressContainerVisibility(false);
+            listener.setNoResultsContainerVisibility(false);
+            if(!showingNewAddressContainer){
+                listener.setHelperTextVisibility(true);
+            }
+        }
     }
 }

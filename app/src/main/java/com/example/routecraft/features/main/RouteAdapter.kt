@@ -44,7 +44,7 @@ class RouteAdapter(private val listener: Listener) : ListAdapter<Route, RouteAda
                     if(position != RecyclerView.NO_POSITION){
                         val popupMenu = PopupMenu(it.context, it)
                         popupMenu.gravity = Gravity.END
-                        popupMenu.inflate(R.menu.navigation_view_route_menu)
+                        popupMenu.inflate(R.menu.menu_navigation_view_route)
                         popupMenu.setOnMenuItemClickListener {item ->
                             when (item.itemId) {
                                 R.id.action_popup_rename -> {
@@ -90,7 +90,7 @@ class RouteAdapter(private val listener: Listener) : ListAdapter<Route, RouteAda
     class DiffCallback : DiffUtil.ItemCallback<Route>(){
 
         override fun areItemsTheSame(oldItem: Route, newItem: Route) =
-                oldItem.id == newItem.id
+                oldItem.routeId == newItem.routeId
 
         override fun areContentsTheSame(oldItem: Route, newItem: Route) =
                 oldItem == newItem

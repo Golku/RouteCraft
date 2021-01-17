@@ -1,18 +1,20 @@
 package com.example.routecraft.features.addAddressWithAutocomplete
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.routecraft.R
 import com.example.routecraft.data.pojos.AutocompletePrediction
 import com.example.routecraft.databinding.ItemAutocompletePredictionBinding
 
 class AutocompleteAdapter(private val listener: Listener) : ListAdapter<AutocompletePrediction, AutocompleteAdapter.PredictionViewHolder>(DiffCallback()) {
 
     interface Listener {
-        fun predictionClick(prediction: AutocompletePrediction)
         fun predictionSelected(prediction: AutocompletePrediction)
+        fun predictionClick(prediction: AutocompletePrediction)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PredictionViewHolder {
@@ -47,15 +49,21 @@ class AutocompleteAdapter(private val listener: Listener) : ListAdapter<Autocomp
         fun bind(prediction: AutocompletePrediction) {
             binding.streetName.text = prediction.streetName
             binding.cityName.text = prediction.cityName
+
+            if(adapterPosition==0){
+                binding.infoHolder.setBackgroundColor(Color.WHITE)
+            }else{
+                binding.infoHolder.setBackgroundResource(R.drawable.prediction_bg)
+            }
         }
     }
 
     class DiffCallback : DiffUtil.ItemCallback<AutocompletePrediction>() {
 
         override fun areItemsTheSame(oldItem: AutocompletePrediction, newItem: AutocompletePrediction) =
-                oldItem.streetName == newItem.streetName
+                false
 
         override fun areContentsTheSame(oldItem: AutocompletePrediction, newItem: AutocompletePrediction) =
-                oldItem == newItem
+                false
     }
 }

@@ -71,9 +71,9 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
             }
         }
 
-        view.getSession().setCurrentRoute(currentRoute.getId());
+        view.getSession().setCurrentRoute(currentRoute.getRouteId());
 
-        Log.d(DEBUG_TAG, "Route ID: " + currentRoute.getId());
+        Log.d(DEBUG_TAG, "Route ID: " + currentRoute.getRouteId());
         Log.d(DEBUG_TAG, "Route Name: " + currentRoute.getName());
         Log.d(DEBUG_TAG, "Route Selected: " + currentRoute.getSelected());
 
@@ -91,7 +91,7 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
     }
 
     private void debugRoute(Route route){
-        Log.d(DEBUG_TAG, "Id: " + route.getId());
+        Log.d(DEBUG_TAG, "Id: " + route.getRouteId());
         Log.d(DEBUG_TAG, "Name: " + route.getName());
         Log.d(DEBUG_TAG, "Selected: " + route.getSelected());
         Log.d(DEBUG_TAG, "AddressList: " + route.getAddressIdList());
@@ -108,7 +108,7 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 
     public void renameRoute(Route route, String routeName){
         Route updatedRoute = itemManager.copyRoute(route, routeName);
-        if(currentRoute.getId() == updatedRoute.getId()){
+        if(currentRoute.getRouteId() == updatedRoute.getRouteId()){
             currentRoute = updatedRoute;
         }
         updateRoute(updatedRoute);
@@ -162,7 +162,7 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
 
     public void deleteRoute(Route route){
 
-        if(route.getId() == currentRoute.getId()){
+        if(route.getRouteId() == currentRoute.getRouteId()){
             Log.d(DEBUG_TAG, "Deleting currently selected");
             loadRoute(allRoutes.getValue().get(1));
         }

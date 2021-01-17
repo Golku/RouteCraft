@@ -38,7 +38,11 @@
         android:id="@+id/addAddressWithAutocompleteFragment"
         android:name="com.example.routecraft.features.addAddressWithAutocomplete.AddAddressWithAutocompleteFragment"
         android:label="Add address"
-        tools:layout="@layout/fragment_add_address_with_autocomplete" />
+        tools:layout="@layout/fragment_add_address_with_autocomplete" >
+        <action
+            android:id="@+id/action_addAddressWithAutocompleteFragment_to_addAddressFragment"
+            app:destination="@id/addAddressFragment" />
+    </fragment>
     <fragment
         android:id="@+id/driveListFragment"
         android:name="com.example.routecraft.features.driveList.DriveListFragment"

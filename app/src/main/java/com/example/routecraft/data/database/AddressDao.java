@@ -12,7 +12,7 @@ import com.example.routecraft.data.pojos.Address;
 @Dao
 public interface AddressDao {
 
-    @Query("SELECT * FROM Address WHERE id == :id")
+    @Query("SELECT * FROM Address WHERE addressId == :id")
     Address getById(int id);
 
     @Query("SELECT * FROM Address WHERE address == :address")

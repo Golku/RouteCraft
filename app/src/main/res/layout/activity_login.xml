@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="75dp"
-        android:text="@string/login_activity_main_text"
+        android:text="@string/login_main_text"
         android:textColor="@color/colorPrimary"
         android:textSize="35sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -37,7 +37,7 @@
             android:layout_width="300dp"
             android:layout_height="55dp"
             android:layout_marginTop="16dp"
-            android:text="@string/login_activity_login_btn"
+            android:text="@string/login_login_btn"
             android:textAllCaps="false"
             android:textColor="@color/colorWhite"
             app:backgroundTint="@color/colorPrimary"
@@ -55,7 +55,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
-            android:hint="@string/login_activity_username_et_hint"
+            android:hint="@string/login_username_et_hint"
             app:boxBackgroundMode="outline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +83,7 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="20dp"
             android:layout_marginEnd="24dp"
-            android:hint="@string/login_activity_password_et_hint"
+            android:hint="@string/login_password_et_hint"
             app:boxBackgroundMode="outline"
             app:endIconMode="password_toggle"
             app:layout_constraintEnd_toEndOf="parent"
@@ -107,7 +107,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="@string/login_activity_remember_username_check_box"
+            android:text="@string/login_remember_username_check_box"
             app:layout_constraintStart_toStartOf="@+id/password"
             app:layout_constraintTop_toBottomOf="@+id/password" />
 
@@ -116,7 +116,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/login_activity_stay_logged_in_check_box"
+            android:text="@string/login_stay_logged_in_check_box"
             app:layout_constraintStart_toStartOf="@+id/password"
             app:layout_constraintTop_toBottomOf="@+id/remember_me_cb" />
 

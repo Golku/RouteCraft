@@ -69,7 +69,7 @@ public class AddressListFragment extends Fragment implements AddressListViewMode
     private void init(){
         viewModel = new ViewModelProvider(requireActivity()).get(AddressListViewModel.class);
         viewModel.setViewListener(this);
-//        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
         viewModel.getAllRoutesWithAddresses().observe(getViewLifecycleOwner(), routeWithAddresses -> {
             if(routeWithAddresses != null){
                 if(routeWithAddresses.size()>0){
@@ -111,6 +111,7 @@ public class AddressListFragment extends Fragment implements AddressListViewMode
     @Override
     public void setAddressList(List<Address> addressList) {
         adapter.submitList(addressList);
+        sharedViewModel.setAddressList(addressList);
     }
 
     @Override

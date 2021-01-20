@@ -1,10 +1,13 @@
 package com.example.routecraft.features.addressList
 
+import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.routecraft.R
 import com.example.routecraft.data.pojos.Address
 import com.example.routecraft.databinding.ItemAddressBinding
 
@@ -29,6 +32,18 @@ class AddressAdapter(private val listener: Listener) : ListAdapter<Address,
         fun bind(address: Address) {
             binding.streetName.text = address.street
             binding.cityName.text = address.city
+
+            if(address.business){
+                binding.addressType.setImageResource(R.drawable.company)
+            }else{
+                binding.addressType.setImageResource(R.drawable.house)
+            }
+
+            if(adapterPosition==0){
+                binding.infoHolder.setBackgroundColor(Color.WHITE)
+            }else{
+                binding.infoHolder.setBackgroundResource(R.drawable.item_address_bg)
+            }
         }
     }
 

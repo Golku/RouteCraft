@@ -56,7 +56,7 @@ class AutocompleteAdapter(private val listener: Listener) : ListAdapter<Autocomp
             if(adapterPosition==0){
                 binding.infoHolder.setBackgroundColor(Color.WHITE)
             }else{
-                binding.infoHolder.setBackgroundResource(R.drawable.prediction_bg)
+                binding.infoHolder.setBackgroundResource(R.drawable.item_autocomplette_prediction_bg)
             }
         }
     }

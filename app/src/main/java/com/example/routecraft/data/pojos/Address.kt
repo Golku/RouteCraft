@@ -13,5 +13,6 @@ data class Address(
         val city: String,
         val country: String = "",
         val lat: Double = 0.0,
-        val lng: Double = 0.0
+        val lng: Double = 0.0,
+        val business: Boolean = false
 )

@@ -79,7 +79,7 @@ public class AddressRepository extends BaseRepository{
     }
 
     public void getFromDb(String street, String city){
-        Address address = itemManager.createAddress(street, city);
+        Address address = itemManager.createAddress(street.toLowerCase(), city.toLowerCase());
         new GetAddressFromDbAsyncTask(addressDao, listener).execute(address);
     }
 

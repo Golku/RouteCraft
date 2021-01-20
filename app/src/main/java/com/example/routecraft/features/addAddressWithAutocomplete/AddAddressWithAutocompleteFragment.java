@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,6 +31,7 @@ import com.example.routecraft.data.pojos.AutocompletePrediction;
 import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.databinding.FragmentAddAddressWithAutocompleteBinding;
 import com.example.routecraft.features.shared.LocationTracker;
+import com.example.routecraft.features.shared.SharedViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,7 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
     private final String DEBUG_TAG = "DEBUG_TAG";
 
     private AddAddressWithAutocompleteViewModel viewModel;
+    private SharedViewModel sharedViewModel;
 
     private NavController navController;
 
@@ -90,6 +93,7 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
         viewModel = new ViewModelProvider(requireActivity()).get(AddAddressWithAutocompleteViewModel.class);
         viewModel.setListener(this);
         viewModel.setUserId(new Session(requireActivity()).getUserId());
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
 
         setHasOptionsMenu(true);
 
@@ -171,8 +175,12 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
 
     @Override
     public void predictionClick(@NonNull AutocompletePrediction prediction) {
-        viewModel.onPredictionClick(prediction);
-        Objects.requireNonNull(binding.routeNameEt.getText()).clear();
+        if(viewModel.addressAlreadyInRoute(sharedViewModel.getAddressList(), prediction)){
+            Toast.makeText(requireActivity(), "Address already in route", Toast.LENGTH_SHORT).show();
+        }else{
+            viewModel.onPredictionClick(prediction);
+            Objects.requireNonNull(binding.routeNameEt.getText()).clear();
+        }
     }
 
     @Override

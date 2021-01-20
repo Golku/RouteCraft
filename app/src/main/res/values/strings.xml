@@ -10,6 +10,14 @@
         <string name="login_stay_logged_in_check_box">Stay Logged In</string>
         <string name="login_remember_username_check_box">Remember Username</string>
 
+        <!-- MainActivity route info -->
+
+        <string name="_0_stops">0 Stops</string>
+        <string name="_0">0</string>
+        <string name="last_stop">Last stop</string>
+        <string name="_19_40">19:40</string>
+        <string name="_11_57">-11:57</string>
+
         <!-- MainActivity navigation view -->
         <string name="navigation_view_username">Username</string>
         <string name="navigation_view_my_routes">My routes</string>

@@ -97,6 +97,24 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
         this.userId = userId;
     }
 
+    public boolean addressAlreadyInRoute(List<Address> addressList, AutocompletePrediction prediction){
+
+        boolean inRoute = false;
+
+        for(Address address: addressList){
+            String street = address.getStreet();
+            String city = address.getCity();
+            Log.d(DEBUG_TAG, prediction.getStreetName()+" vs " + street);
+            Log.d(DEBUG_TAG, prediction.getCityName()+" vs " + city);
+            if(street.equals(prediction.getStreetName()) && prediction.getCityName().contains(city)){
+                inRoute = true;
+                break;
+            }
+        }
+
+        return inRoute;
+    }
+
     public void onPredictionClick(AutocompletePrediction prediction) {
         addressRequest = new AddressRequest(
                 userId,
@@ -234,10 +252,10 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
     @Override
     public void addressRequestOnResponse(AddressResponse response) {
         if (response != null && response.isValid()) {
-//            Log.d(DEBUG_TAG, "Address response is valid");
+            Log.d(DEBUG_TAG, "Address response is valid");
             Address address = itemManager.copyAddress(response.getAddress(),
                     listener.getSession().getNewAddressId());
-//            Log.d(DEBUG_TAG, "Address id: " + address.getAddressId());
+            Log.d(DEBUG_TAG, "Address id: " + address.getAddressId());
             addressRepository.insert(address);
             addressRepository.insertRouteAddressCrossRef(
                     new RouteAddressCrossRef(
@@ -248,7 +266,7 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
             addNewAddress(address);
             sessionId = idGenerator.nextInt(1000000);
         } else {
-//            Log.d(DEBUG_TAG, "Address response is not valid");
+            Log.d(DEBUG_TAG, "Address response is not valid");
             listener.failedToGetAddress();
         }
     }

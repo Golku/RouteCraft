@@ -62,8 +62,6 @@ public class AddressListViewModel extends AndroidViewModel {
                     Log.d(DEBUG_TAG, "Address list is empty");
                 }
                 break;
-            }else{
-                Log.d(DEBUG_TAG, "No Match");
             }
         }
 

@@ -28,7 +28,6 @@ public class AddressRepository extends BaseRepository{
     private Listener listener;
     private RouteCraftApiService service;
     private AddressDao addressDao;
-    private LiveData<List<RouteWithAddresses>> routesWithAddresses;
     private ItemManager itemManager;
 
     public interface Listener{
@@ -36,13 +35,6 @@ public class AddressRepository extends BaseRepository{
         void addressRequestOnResponse(AddressResponse response);
         void addressRequestOnFailure(String message);
         void AllAddress(List<Address> addressList);
-    }
-
-    public AddressRepository(Application application){
-        RouteDatabase routeDatabase = RouteDatabase.getInstance(application);
-        addressDao = routeDatabase.addressDao();
-        routesWithAddresses = addressDao.getAllRouteWithAddresses();
-        itemManager = new ItemManager();
     }
 
     public AddressRepository(Application application, Listener listener) {
@@ -55,10 +47,6 @@ public class AddressRepository extends BaseRepository{
 
     public void getAllAddress(){
         new GetAllAddressAsyncTask(addressDao, listener).execute();
-    }
-
-    public LiveData<List<RouteWithAddresses>> getRoutesWithAddresses(){
-        return routesWithAddresses;
     }
 
     public void getFromApi(AddressRequest request){

@@ -10,6 +10,7 @@ public class Session {
     private final String REMEMBER_USERNAME = "REMEMBER_USERNAME";
     private final String STAY_LOGGED_IN = "STAY_LOGGED_IN";
     private final String CURRENT_ROUTE = "CURRENT_ROUTE";
+    private final String ADDRESS_LIST_ORDER = "ADDRESS_LIST_ORDER";
 
     private SharedPreferences prefs;
 
@@ -40,6 +41,11 @@ public class Session {
     public void setCurrentRoute(int routeId) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(CURRENT_ROUTE, routeId).apply();
+    }
+
+    public void setAddressListOrder(int order) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(ADDRESS_LIST_ORDER, order).apply();
     }
 
     public int getNewRouteId(){
@@ -83,4 +89,8 @@ public class Session {
     }
 
     public int getCurrentRoute(){return prefs.getInt(CURRENT_ROUTE, 1);}
+
+    public int geAddressListOrder() {
+        return prefs.getInt(ADDRESS_LIST_ORDER, 1);
+    }
 }

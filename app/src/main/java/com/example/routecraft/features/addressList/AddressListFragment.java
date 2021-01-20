@@ -70,19 +70,16 @@ public class AddressListFragment extends Fragment implements AddressListViewMode
         viewModel = new ViewModelProvider(requireActivity()).get(AddressListViewModel.class);
         viewModel.setViewListener(this);
         sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
-        viewModel.getAllRoutesWithAddresses().observe(getViewLifecycleOwner(), routeWithAddresses -> {
-            if(routeWithAddresses != null){
-                if(routeWithAddresses.size()>0){
-                    viewModel.loadAddressList(routeWithAddresses);
-                }
-            }
-        });
 
         setHasOptionsMenu(true);
 
         adapter = new AddressAdapter(this);
         binding.addressList.setAdapter(adapter);
         binding.addressList.setHasFixedSize(true);
+
+        sharedViewModel.getAddressList().observe(getViewLifecycleOwner(), addressList ->
+                adapter.submitList(viewModel.sortAddressList(addressList))
+        );
 
         binding.addAddressBtn.setOnClickListener(view1 -> {
             NavDirections action = AddressListFragmentDirections.actionAddressListFragmentToAddAddressWithAutocompleteFragment();
@@ -92,12 +89,19 @@ public class AddressListFragment extends Fragment implements AddressListViewMode
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_add_address_with_autocomplete_fragment, menu);
+        inflater.inflate(R.menu.menu_address_list_fragment, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.action_manual_address_input) {
+        Session session = new Session(requireActivity());
+        if(item.getItemId() == R.id.action_sort_as_inputted){
+            session.setAddressListOrder(1);
+            sharedViewModel.setAddressList(sharedViewModel.getAddressList().getValue());
+            return true;
+        }else if (item.getItemId() == R.id.action_sort_by_business) {
+            session.setAddressListOrder(2);
+            sharedViewModel.setAddressList(sharedViewModel.getAddressList().getValue());
             return true;
         }
         return false;
@@ -106,12 +110,6 @@ public class AddressListFragment extends Fragment implements AddressListViewMode
     @Override
     public Session getSession() {
         return new Session(requireActivity());
-    }
-
-    @Override
-    public void setAddressList(List<Address> addressList) {
-        adapter.submitList(addressList);
-        sharedViewModel.setAddressList(addressList);
     }
 
     @Override

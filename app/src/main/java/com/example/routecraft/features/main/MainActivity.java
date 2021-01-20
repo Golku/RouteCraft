@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -16,13 +14,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.example.routecraft.R;
-import com.example.routecraft.data.pojos.Address;
 import com.example.routecraft.data.pojos.Route;
-import com.example.routecraft.data.pojos.RouteWithAddresses;
 import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.databinding.ActivityMainBinding;
 import com.example.routecraft.features.addAddressWithAutocomplete.AddAddressWithAutocompleteFragment;
@@ -82,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
         binding.routeListRv.setHasFixedSize(true);
 
         viewModel.getAllRoutes().observe(this, routeAdapter::submitList);
+
+        viewModel.getAllRoutesWithAddresses().observe(this, routeWithAddresses ->
+                sharedViewModel.setAddressList(viewModel.getAddressList(routeWithAddresses))
+        );
 
         setOnClickListeners();
         viewModel.getRoute(session.getCurrentRoute());
@@ -154,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     @Override
     public void onCreateRoute(String routeName, boolean cancel) {
         createNewRouteDialog.dismiss();
-        if(cancel){
+        if (cancel) {
             return;
         }
         binding.drawerLayout.closeDrawer(GravityCompat.START);
@@ -175,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     @Override
     public void onRenameRoute(String routeName, boolean cancel) {
         renameRouteDialog.dismiss();
-        if(cancel){
+        if (cancel) {
             return;
         }
         viewModel.renameRoute(viewModel.getRouteToModify(), routeName);
@@ -201,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     @Override
     public void onDeleteRoute(boolean cancel) {
         deleteRouteDialog.dismiss();
-        if(cancel){
+        if (cancel) {
             return;
         }
         viewModel.deleteRoute(viewModel.getRouteToModify());

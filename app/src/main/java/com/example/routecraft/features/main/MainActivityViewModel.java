@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
+import com.example.routecraft.data.pojos.Address;
 import com.example.routecraft.data.pojos.IdHolder;
 import com.example.routecraft.data.pojos.Route;
 import com.example.routecraft.data.pojos.RouteWithAddresses;
@@ -14,6 +15,7 @@ import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.features.shared.ItemManager;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,12 +30,8 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
     private LiveData<List<RouteWithAddresses>> allRoutesWithAddresses;
 
     private Route currentRoute;
-    private List<Integer> addressIdLIst;
-    private List<Integer> driveIdLIst;
 
     private Route routeToModify;
-
-    private Gson gson;
 
     private ItemManager itemManager;
 
@@ -42,7 +40,6 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
         routeRepository = new RouteRepository(application, this);
         allRoutes = routeRepository.getAllRoutes();
         allRoutesWithAddresses = routeRepository.getRoutesWithAddressesList();
-        gson = new Gson();
         itemManager = new ItemManager();
     }
 
@@ -75,31 +72,39 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
         }
 
         listener.getSession().setCurrentRoute(currentRoute.getRouteId());
-
-//        Log.d(DEBUG_TAG, "Route ID: " + currentRoute.getRouteId());
-//        Log.d(DEBUG_TAG, "Route Name: " + currentRoute.getName());
-//        Log.d(DEBUG_TAG, "Route Selected: " + currentRoute.getSelected());
-
-        Gson gson = new Gson();
-        IdHolder addressIdHolder = gson.fromJson(currentRoute.getAddressIdList(), IdHolder.class);
-        IdHolder driveIdHolder = gson.fromJson(currentRoute.getDriveIdList(), IdHolder.class);
-
-        addressIdLIst = addressIdHolder.getIdList();
-        driveIdLIst = driveIdHolder.getIdList();
-
-//        Log.d(DEBUG_TAG, "AddressIdList size: " + addressIdLIst.size());
-//        Log.d(DEBUG_TAG, "DriveIdList size: " + driveIdLIst.size());
-
-//        view.updateFragmentInfo();
     }
 
-    private void debugRoute(Route route) {
-        Log.d(DEBUG_TAG, "Id: " + route.getRouteId());
-        Log.d(DEBUG_TAG, "Name: " + route.getName());
-        Log.d(DEBUG_TAG, "Selected: " + route.getSelected());
-        Log.d(DEBUG_TAG, "AddressList: " + route.getAddressIdList());
-        Log.d(DEBUG_TAG, "DriveList: " + route.getDriveIdList());
-        Log.d(DEBUG_TAG, "Creation time: " + route.getCreationDate());
+    public List<Address> getAddressList(List<RouteWithAddresses> routeWithAddresses){
+
+        int currentRouteId = listener.getSession().getCurrentRoute();
+        List<Address> addressList = new ArrayList<>();
+
+        Log.d(DEBUG_TAG, "Current route ID: " + currentRouteId);
+
+        for(RouteWithAddresses route: routeWithAddresses){
+
+            int routeId = route.getRoute().getRouteId();
+
+            if(currentRouteId == routeId){
+
+                Log.d(DEBUG_TAG, "Route found: " + route.getRoute().getName());
+
+                if (route.getAddress().size()>0) {
+
+                    for(Address address: route.getAddress()){
+
+                        Log.d(DEBUG_TAG, "Address: " + address.getAddress());
+                    }
+
+                    addressList.addAll(route.getAddress());
+                }else{
+                    Log.d(DEBUG_TAG, "Address list is empty");
+                }
+                break;
+            }
+        }
+
+        return addressList;
     }
 
     public void createNewRoute(String routeName) {
@@ -117,34 +122,6 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
         updateRoute(updatedRoute);
     }
 
-    public void updateRouteAddressIdList(List<Integer> addressIdLIst) {
-
-        Log.d(DEBUG_TAG, "New address added to " + currentRoute.getName());
-
-        IdHolder idHolder = new IdHolder();
-        idHolder.setIdList(addressIdLIst);
-
-        String addressIdListJson = gson.toJson(idHolder);
-
-//        currentRoute.setAddressIdList(addressIdListJson);
-
-        updateRoute(currentRoute);
-    }
-
-    public void updateRouteDriveIdLIst(List<Integer> driveIdList) {
-
-        Log.d(DEBUG_TAG, "New drive added to " + currentRoute.getName());
-
-        IdHolder idHolder = new IdHolder();
-        idHolder.setIdList(driveIdList);
-
-        String driveIdListJson = gson.toJson(idHolder);
-
-//        currentRoute.setDriveIdList(driveIdListJson);
-
-        updateRoute(currentRoute);
-    }
-
     public void getRoute(int routeId) {
         //Log.d(DEBUG_TAG, "Getting route with id: " + routeId);
         routeRepository.get(routeId);
@@ -154,51 +131,6 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
     public void onRouteRetrieved(Route route) {
         loadRoute(route);
     }
-
-    //    @Override
-//    public void onAllRouteWithAddressesRetrieved(List<RouteWithAddresses> allRouteWithAddresses) {
-//        if (allRouteWithAddresses != null) {
-//            if (allRouteWithAddresses.size() > 0) {
-//                for (RouteWithAddresses routeWithAddresses1 : allRouteWithAddresses) {
-//                    Log.d(DEBUG_TAG, "Route name: " + routeWithAddresses1.getRoute().getName());
-//
-//                    for (Address address : routeWithAddresses1.getAddress()) {
-//                        Log.d(DEBUG_TAG, "address: " + address.getAddress());
-//                    }
-//
-//                }
-//                Log.d(DEBUG_TAG, " ");
-//            } else {
-//                Log.d(DEBUG_TAG, "allRouteWithAddresses is empty");
-//            }
-//        } else {
-//            Log.d(DEBUG_TAG, "allRouteWithAddresses is null");
-//        }
-//
-//    }
-
-//    @Override
-//    public void onARouteWithAddressesRetrieved(LiveData<RouteWithAddresses> routeWithAddresses) {
-//        if(routeWithAddresses == null){
-//            Log.d(DEBUG_TAG, "routeWithAddresses is null");
-//            return;
-//        }
-//        if (routeWithAddresses.getValue() != null) {
-//            RouteWithAddresses route = routeWithAddresses.getValue();
-//            Log.d(DEBUG_TAG, "Route: " + route.getRoute().getName());
-//            if (route.getAddress().size() > 0) {
-//                //listener.setAddressList(routeWithAddresses);
-//                for (Address address : route.getAddress()) {
-//                    Log.d(DEBUG_TAG, "address: " + address.getAddress());
-//                }
-//                Log.d(DEBUG_TAG, " ");
-//            } else {
-//                Log.d(DEBUG_TAG, "addresses list is empty");
-//            }
-//        } else {
-//            Log.d(DEBUG_TAG, "routeWithAddresses is null");
-//        }
-//    }
 
     public void insertRoute(Route route) {
         routeRepository.insert(route);
@@ -229,19 +161,11 @@ public class MainActivityViewModel extends AndroidViewModel implements RouteRepo
         return currentRoute;
     }
 
-    public List<Integer> getAddressIdLIst() {
-        return addressIdLIst;
-    }
-
-    public List<Integer> getDriveIdLIst() {
-        return driveIdLIst;
+    public void setRouteToModify(Route routeToModify) {
+        this.routeToModify = routeToModify;
     }
 
     public Route getRouteToModify() {
         return routeToModify;
-    }
-
-    public void setRouteToModify(Route routeToModify) {
-        this.routeToModify = routeToModify;
     }
 }

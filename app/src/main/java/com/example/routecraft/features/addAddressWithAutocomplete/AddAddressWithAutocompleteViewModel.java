@@ -104,8 +104,6 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
         for(Address address: addressList){
             String street = address.getStreet();
             String city = address.getCity();
-            Log.d(DEBUG_TAG, prediction.getStreetName()+" vs " + street);
-            Log.d(DEBUG_TAG, prediction.getCityName()+" vs " + city);
             if(street.equals(prediction.getStreetName()) && prediction.getCityName().contains(city)){
                 inRoute = true;
                 break;

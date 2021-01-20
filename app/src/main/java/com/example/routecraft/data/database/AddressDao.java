@@ -35,8 +35,4 @@ public interface AddressDao {
 
     @Delete
     void delete(Address address);
-
-    @Transaction
-    @Query("SELECT * FROM route")
-    LiveData<List<RouteWithAddresses>> getAllRouteWithAddresses();
 }

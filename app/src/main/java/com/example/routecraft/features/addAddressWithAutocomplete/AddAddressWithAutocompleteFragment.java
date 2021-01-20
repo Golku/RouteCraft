@@ -175,7 +175,10 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
 
     @Override
     public void predictionClick(@NonNull AutocompletePrediction prediction) {
-        if(viewModel.addressAlreadyInRoute(sharedViewModel.getAddressList(), prediction)){
+        if(viewModel.addressAlreadyInRoute(
+                Objects.requireNonNull(sharedViewModel.getAddressList().getValue()),
+                prediction)
+        ){
             Toast.makeText(requireActivity(), "Address already in route", Toast.LENGTH_SHORT).show();
         }else{
             viewModel.onPredictionClick(prediction);

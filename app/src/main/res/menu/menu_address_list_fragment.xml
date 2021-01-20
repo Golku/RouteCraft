@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:icon="@drawable/ic_filter_list"
+        android:title="@string/address_list_sort"
+        app:showAsAction="always">
+
+        <menu>
+            <item
+                android:id="@+id/action_sort_as_inputted"
+                android:title="@string/address_list_sort_as_inputted"/>
+
+            <item
+                android:id="@+id/action_sort_by_business"
+                android:title="@string/address_list_sort_by_business"/>
+        </menu>
+
+    </item>
+
+</menu>

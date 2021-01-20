@@ -35,6 +35,9 @@
 
     <!-- fragment -->
 
+        <string name="address_list_sort_by_business">Sort by business</string>
+        <string name="address_list_sort_as_inputted">Sort by input sequence</string>
+        <string name="address_list_sort">Sort</string>
         <string name="add_address_add_btn">Add</string>
         <string name="add_address_cancel_btn">Cancel</string>
         <string name="add_address_street_and_house_number">Street and house number</string>

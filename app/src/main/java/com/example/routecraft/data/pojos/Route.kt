@@ -9,7 +9,5 @@ data class Route(
         val routeId: Int,
         val name: String,
         val selected: Boolean = true,
-        val addressIdList: String = "{\"idList\":[]}",
-        val driveIdList: String = "{\"idList\":[]}",
         val creationDate: Long = System.currentTimeMillis()
 )

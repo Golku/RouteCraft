@@ -13,8 +13,11 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.routecraft.databinding.FragmentMapBinding;
 import com.example.routecraft.features.shared.SharedViewModel;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private final String debugTag = "debugTag";
 
@@ -39,7 +42,20 @@ public class MapFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
+        init();
+    }
+
+    private void init(){
+        sharedViewModel = new ViewModelProvider(requireActivity()).get(SharedViewModel.class);
+
+        binding.mapView.onCreate(null);
+        binding.mapView.onResume();
+        binding.mapView.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        MapsInitializer.initialize(requireContext());
     }
 
     @Override

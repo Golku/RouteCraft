@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toStartOf="@+id/info_holder"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/marker_blue" />
+        app:srcCompat="@drawable/ic_marker_blue" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/info_holder"

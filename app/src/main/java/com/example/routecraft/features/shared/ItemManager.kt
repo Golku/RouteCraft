@@ -1,5 +1,6 @@
 package com.example.routecraft.features.shared
 
+import com.example.routecraft.data.pojos.Address
 import com.example.routecraft.data.pojos.Route
 
 class ItemManager {
@@ -14,5 +15,13 @@ class ItemManager {
 
     fun copyRoute(route: Route, selected: Boolean): Route{
         return route.copy(selected = selected)
+    }
+
+    fun createAddress(street: String, city: String): Address {
+        return Address(0, street = street, city = city)
+    }
+
+    fun copyAddress(address: Address, addressId: Int): Address{
+        return address.copy(addressId = addressId);
     }
 }

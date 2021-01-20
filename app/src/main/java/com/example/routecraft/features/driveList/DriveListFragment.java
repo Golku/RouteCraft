@@ -40,7 +40,6 @@ public class DriveListFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         sharedViewModel = new ViewModelProvider(getActivity()).get(SharedViewModel.class);
-        binding.modTv.setText(sharedViewModel.getText());
     }
 
     @Override

@@ -1,22 +1,23 @@
 package com.example.routecraft.features.addAddressWithAutocomplete;
 
 import android.app.Application;
-import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 
 import com.example.routecraft.data.pojos.Address;
+import com.example.routecraft.data.pojos.AddressResponse;
 import com.example.routecraft.data.pojos.AutocompletePrediction;
+import com.example.routecraft.data.pojos.RouteAddressCrossRef;
+import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.data.pojos.api.AddressRequest;
 import com.example.routecraft.data.pojos.api.AutocompleteRequest;
 import com.example.routecraft.data.pojos.LatLng;
 import com.example.routecraft.features.shared.AddressRepository;
+import com.example.routecraft.features.shared.ItemManager;
 import com.example.routecraft.features.shared.LocationTracker;
 
 import java.util.ArrayList;
@@ -46,24 +47,42 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
     private Random idGenerator;
     private LatLng userLocation;
 
+    private AddressRequest addressRequest;
+
+    private ItemManager itemManager;
+
     interface Listener {
-        void setHelperTextVisibility(boolean visible);
-        void setPredictionListVisibility(int visible);
-        void setNoResultsContainerVisibility(boolean visible);
-        void setNewAddressContainerVisibility(boolean visible);
-        void setFetchingAddressContainerVisibility(boolean visible);
         void fetchingNewAddress(String street, String city);
+
         void newAddressAdded(String street, String city);
+
+        void failedToGetAddress();
+
+        void failedToGetPrediction();
+
         void setPredictionsList(List<AutocompletePrediction> predictionsList);
+
+        void setHelperTextVisibility(boolean visible);
+
+        void setPredictionListVisibility(boolean visible);
+
+        void setNoResultsContainerVisibility(boolean visible);
+
+        void setNewAddressContainerVisibility(boolean visible);
+
+        void setFetchingAddressContainerVisibility(boolean visible);
+
+        Session getSession();
     }
 
     public AddAddressWithAutocompleteViewModel(@NonNull Application application) {
         super(application);
 
         autocompleteRepository = new AutocompleteRepository(this);
-        addressRepository = new AddressRepository(this);
+        addressRepository = new AddressRepository(application, this);
         handler = new Handler(Looper.getMainLooper());
         idGenerator = new Random();
+        itemManager = new ItemManager();
 
         sessionId = idGenerator.nextInt(1000000);
 
@@ -79,7 +98,7 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
     }
 
     public void onPredictionClick(AutocompletePrediction prediction) {
-        AddressRequest request = new AddressRequest(
+        addressRequest = new AddressRequest(
                 userId,
                 sessionId,
                 prediction.getPlaceId(),
@@ -87,18 +106,18 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
         );
         Log.d(DEBUG_TAG, "Prediction click:" + prediction.getStreetName() + ", " + prediction.getCityName());
         listener.fetchingNewAddress(prediction.getStreetName(), prediction.getCityName());
-        listener.setPredictionListVisibility(View.INVISIBLE);
+        listener.setPredictionListVisibility(false);
         listener.setNewAddressContainerVisibility(true);
         showingNewAddressContainer = true;
+
         handler.postDelayed(() -> {
-            addressRepository.get(request);
-            sessionId = idGenerator.nextInt(1000000);
-        },500);
+            addressRepository.getFromDb(prediction.getStreetName(), prediction.getCityName());
+        }, 500);
     }
 
     public void startPredictionQue() {
         listener.setHelperTextVisibility(false);
-        listener.setPredictionListVisibility(View.INVISIBLE);
+        listener.setPredictionListVisibility(false);
         listener.setNewAddressContainerVisibility(false);
         listener.setNoResultsContainerVisibility(false);
         showingNewAddressContainer = false;
@@ -114,7 +133,7 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
         if (userLocation == null) {
             userLocation = new LatLng(52.0082339, 4.3129992);
         }
-        Log.d(DEBUG_TAG, "Text query: " + queryText + " and location: " + userLocation.getLatitude() + ", " + userLocation.getLongitude());
+//        Log.d(DEBUG_TAG, "Text query: " + queryText + " and location: " + userLocation.getLatitude() + ", " + userLocation.getLongitude());
         AutocompleteRequest request = new AutocompleteRequest(
                 userId,
                 sessionId,
@@ -150,9 +169,9 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
 
         handler.postDelayed(() -> {
             listener.setFetchingAddressContainerVisibility(false);
-            if(predictionList.size()>0){
-                listener.setPredictionListVisibility(View.VISIBLE);
-            }else{
+            if (predictionList.size() > 0) {
+                listener.setPredictionListVisibility(true);
+            } else {
                 listener.setNoResultsContainerVisibility(true);
             }
         }, 250);
@@ -162,27 +181,89 @@ public class AddAddressWithAutocompleteViewModel extends AndroidViewModel implem
     public void autoCompleteRequestOnFailure(String message) {
         Log.d(DEBUG_TAG, "Failed to get autocomplete predictions: " + message);
         listener.setFetchingAddressContainerVisibility(false);
+        listener.failedToGetPrediction();
+
     }
 
     @Override
-    public void addressRequestOnResponse(Address address) {
-        Log.d(DEBUG_TAG, "Address response");
-        Log.d(DEBUG_TAG, "Address: " + address.getAddress());
+    public void AllAddress(List<Address> addressList) {
 
-        listener.newAddressAdded(address.getStreet(), address.getPostCode()+" "+ address.getCity());
+        if (addressList != null) {
+            if (addressList.size() > 0) {
+
+                for (Address address : addressList) {
+
+                    Log.d(DEBUG_TAG, "Id:" + address.getAddressId());
+                    Log.d(DEBUG_TAG, "Street:" + address.getStreet());
+                    Log.d(DEBUG_TAG, "postcode:" + address.getPostCode());
+                    Log.d(DEBUG_TAG, "city:" + address.getCity());
+                    Log.d(DEBUG_TAG, "country:" + address.getCountry());
+                    Log.d(DEBUG_TAG, "lat:" + address.getLat());
+                    Log.d(DEBUG_TAG, "lng:" + address.getLng());
+                }
+
+            } else {
+                Log.d(DEBUG_TAG, "List is empty");
+            }
+        } else {
+            Log.d(DEBUG_TAG, "List is null");
+        }
+    }
+
+    private void addNewAddress(Address address) {
+        listener.newAddressAdded(address.getStreet(), address.getPostCode() + " " + address.getCity());
+    }
+
+    @Override
+    public void addressRetrievedFromDb(Address address) {
+        if (address != null) {
+            Log.d(DEBUG_TAG, "Address already in DB: " + address.getAddress());
+            handler.post(() -> addNewAddress(address));
+            addressRepository.insertRouteAddressCrossRef(
+                    new RouteAddressCrossRef(
+                            listener.getSession().getCurrentRoute(),
+                            address.getAddressId()
+                    )
+            );
+        } else {
+            Log.d(DEBUG_TAG, "Address is null, fetching from API");
+            addressRepository.getFromApi(addressRequest);
+        }
+    }
+
+    @Override
+    public void addressRequestOnResponse(AddressResponse response) {
+        if (response != null && response.isValid()) {
+//            Log.d(DEBUG_TAG, "Address response is valid");
+            Address address = itemManager.copyAddress(response.getAddress(),
+                    listener.getSession().getNewAddressId());
+//            Log.d(DEBUG_TAG, "Address id: " + address.getAddressId());
+            addressRepository.insert(address);
+            addressRepository.insertRouteAddressCrossRef(
+                    new RouteAddressCrossRef(
+                            listener.getSession().getCurrentRoute(),
+                            address.getAddressId()
+                    )
+            );
+            addNewAddress(address);
+            sessionId = idGenerator.nextInt(1000000);
+        } else {
+//            Log.d(DEBUG_TAG, "Address response is not valid");
+            listener.failedToGetAddress();
+        }
     }
 
     @Override
     public void addressRequestOnFailure(String message) {
-
+        listener.failedToGetAddress();
     }
 
     public void setQueryText(String queryText) {
         this.queryText = queryText;
-        if(queryText.length()<3){
+        if (queryText.length() < 3) {
             listener.setFetchingAddressContainerVisibility(false);
             listener.setNoResultsContainerVisibility(false);
-            if(!showingNewAddressContainer){
+            if (!showingNewAddressContainer) {
                 listener.setHelperTextVisibility(true);
             }
         }

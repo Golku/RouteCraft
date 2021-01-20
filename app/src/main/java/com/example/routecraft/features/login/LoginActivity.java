@@ -2,25 +2,23 @@ package com.example.routecraft.features.login;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-import com.example.routecraft.R;
 import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.databinding.ActivityLoginBinding;
 import com.example.routecraft.features.main.MainActivity;
 import com.example.routecraft.features.dialogs.GenericLoadingDialog;
 import com.example.routecraft.features.dialogs.GenericMessageDialog;
+
+import java.util.Objects;
 
 public class LoginActivity extends AppCompatActivity implements LoginViewModel.ViewListener,
         GenericMessageDialog.Listener {
@@ -67,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
                     imm.showSoftInput(binding.passwordEt, 0);
                 }
             }
-        }, 1000);
+        }, 500);
     }
 
     private void setOnClickListeners() {
@@ -80,8 +78,8 @@ public class LoginActivity extends AppCompatActivity implements LoginViewModel.V
 
             showGenericLoadingDialog();
 
-            username = binding.usernameEt.getText().toString();
-            viewModel.loginRequest(username.toLowerCase(), binding.passwordEt.getText().toString());
+            username = Objects.requireNonNull(binding.usernameEt.getText()).toString();
+            viewModel.loginRequest(username.toLowerCase(), Objects.requireNonNull(binding.passwordEt.getText()).toString());
         });
     }
 

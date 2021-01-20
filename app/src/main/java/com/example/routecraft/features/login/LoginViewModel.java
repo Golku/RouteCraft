@@ -31,7 +31,7 @@ public class LoginViewModel extends AndroidViewModel implements LoginRepository.
     public void loginRequest(String username, String password) {
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             repository.loginRequest(username, password);
-        }, 1000);
+        }, 500);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.example.routecraft.data.api;
 
 import com.example.routecraft.data.pojos.Address;
+import com.example.routecraft.data.pojos.AddressResponse;
 import com.example.routecraft.data.pojos.AutocompletePrediction;
 import com.example.routecraft.data.pojos.api.AutocompleteRequest;
 import com.example.routecraft.data.pojos.api.AddressRequest;
@@ -17,5 +18,5 @@ public interface RouteCraftApiService {
     Call<List<AutocompletePrediction>> autocompleteRequest(@Body AutocompleteRequest request);
 
     @POST("address")
-    Call<Address> addressRequest(@Body AddressRequest request);
+    Call<AddressResponse> addressRequest(@Body AddressRequest request);
 }

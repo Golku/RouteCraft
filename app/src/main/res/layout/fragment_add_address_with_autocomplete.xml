@@ -49,7 +49,9 @@
                 android:importantForAutofill="no"
                 android:inputType="textVisiblePassword"
                 android:maxLines="1"
-                android:padding="16dp"></com.google.android.material.textfield.TextInputEditText>
+                android:padding="16dp">
+
+            </com.google.android.material.textfield.TextInputEditText>
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -84,7 +86,7 @@
             android:layout_height="24dp"
             android:layout_marginStart="16dp"
             android:contentDescription="@null"
-            android:src="@drawable/marker_blue"
+            android:src="@drawable/ic_marker_blue"
             android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="@+id/city_name"
             app:layout_constraintStart_toStartOf="parent"

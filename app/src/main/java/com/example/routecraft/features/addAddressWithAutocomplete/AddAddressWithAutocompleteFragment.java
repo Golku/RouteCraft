@@ -53,6 +53,12 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
 
     private LocationTracker locationTracker;
 
+    private Listener listener;
+
+    public interface Listener{
+        void addAddressWithAutoMessageDialog(String message);
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,7 +119,6 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
                     viewModel.startPredictionQue();
                 } else {
                     if (adapter.getItemCount() > 0) {
-                        Log.d(DEBUG_TAG, "Empty list");
                         adapter.submitList(new ArrayList<>());
                     }
                 }
@@ -129,7 +134,7 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
             locationTracker.getUserLocation();
             showKeyboard();
         } else {
-            requestPermissions(new String[] { ACCESS_FINE_LOCATION }, 100);
+            requestPermissions(new String[]{ACCESS_FINE_LOCATION}, 100);
         }
     }
 
@@ -149,6 +154,11 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
     }
 
     @Override
+    public Session getSession() {
+        return new Session(requireActivity());
+    }
+
+    @Override
     public void setPredictionsList(List<AutocompletePrediction> predictionsList) {
         adapter.submitList(predictionsList);
     }
@@ -162,14 +172,11 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
     @Override
     public void predictionClick(@NonNull AutocompletePrediction prediction) {
         viewModel.onPredictionClick(prediction);
-        if (binding.routeNameEt.getText() != null) {
-            binding.routeNameEt.getText().clear();
-        }
+        Objects.requireNonNull(binding.routeNameEt.getText()).clear();
     }
 
     @Override
     public void setHelperTextVisibility(boolean visible) {
-        Log.d(DEBUG_TAG, "setHelperTextVisibility: " + visible);
         if (visible) {
             binding.helperText.setVisibility(View.VISIBLE);
         } else {
@@ -178,20 +185,16 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
     }
 
     @Override
-    public void setPredictionListVisibility(int visible) {
-        Log.d(DEBUG_TAG, "setPredictionListVisibility: " + visible);
-        if (visible == View.VISIBLE) {
+    public void setPredictionListVisibility(boolean visible) {
+        if (visible) {
             binding.predictionRv.setVisibility(View.VISIBLE);
-        } else if(visible == View.INVISIBLE){
+        } else {
             binding.predictionRv.setVisibility(View.INVISIBLE);
-        }else if(visible == View.GONE){
-            binding.predictionRv.setVisibility(View.GONE);
         }
     }
 
     @Override
     public void setNoResultsContainerVisibility(boolean visible) {
-        Log.d(DEBUG_TAG, "setNoResultsContainerVisibility: " + visible);
         if (visible) {
             binding.noResultsContainer.setVisibility(View.VISIBLE);
         } else {
@@ -201,7 +204,6 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
 
     @Override
     public void setNewAddressContainerVisibility(boolean visible) {
-        Log.d(DEBUG_TAG, "setNewAddressContainerVisibility: " + visible);
         if (visible) {
             binding.newAddressContainer.setVisibility(View.VISIBLE);
         } else {
@@ -232,8 +234,22 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
         binding.streetName.setText(street);
         binding.cityName.setText(city);
         binding.addingAddressPb.setVisibility(View.INVISIBLE);
+        binding.addressType.setImageResource(R.drawable.ic_marker_blue);
         binding.addressType.setVisibility(View.VISIBLE);
         binding.added.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void failedToGetAddress() {
+        binding.addingAddressPb.setVisibility(View.INVISIBLE);
+        binding.addressType.setVisibility(View.VISIBLE);
+        binding.addressType.setImageResource(R.drawable.ic_fail);
+        listener.addAddressWithAutoMessageDialog("Failed to add address");
+    }
+
+    @Override
+    public void failedToGetPrediction() {
+        listener.addAddressWithAutoMessageDialog("Failed to get address prediction");
     }
 
     @Override
@@ -247,12 +263,23 @@ public class AddAddressWithAutocompleteFragment extends Fragment implements
         showKeyboard();
     }
 
-    private void showKeyboard(){
+    private void showKeyboard() {
+        InputMethodManager imm = (InputMethodManager) requireActivity()
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.isActive();
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            InputMethodManager imm = (InputMethodManager) requireActivity()
-                    .getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.showSoftInput(binding.routeNameEt, 0);
-        }, 150);
+        }, 100);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if(context instanceof Listener){
+            listener = (Listener) context;
+        }else{
+            throw  new RuntimeException(context.toString() + " must implement Listener");
+        }
     }
 
     @Override

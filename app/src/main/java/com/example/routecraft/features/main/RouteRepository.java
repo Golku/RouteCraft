@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import com.example.routecraft.data.database.RouteDao;
 import com.example.routecraft.data.database.RouteDatabase;
 import com.example.routecraft.data.pojos.Route;
+import com.example.routecraft.data.pojos.RouteWithAddresses;
 
 import java.util.List;
 
@@ -15,16 +16,20 @@ public class RouteRepository {
 
     private RouteDao routeDao;
     private LiveData<List<Route>> allRoutes;
+    private LiveData<List<RouteWithAddresses>> routesWithAddressesList;
     private Listener listener;
 
     public interface Listener{
         void onRouteRetrieved(Route route);
+        //void onAllRouteWithAddressesRetrieved(List<RouteWithAddresses> allRouteWithAddresses);
+        //void onARouteWithAddressesRetrieved(RouteWithAddresses routeWithAddresses);
     }
 
     public RouteRepository(Application application, Listener listener) {
         RouteDatabase routeDatabase = RouteDatabase.getInstance(application);
         routeDao = routeDatabase.routeDao();
         allRoutes = routeDao.getAllRoutes();
+        routesWithAddressesList = routeDao.getAllRouteWithAddresses();
         this.listener = listener;
     }
 
@@ -44,6 +49,10 @@ public class RouteRepository {
 
     public LiveData<List<Route>> getAllRoutes(){
         return allRoutes;
+    }
+
+    public LiveData<List<RouteWithAddresses>> getRoutesWithAddressesList(){
+        return routesWithAddressesList;
     }
 
     private static class GetRouteAsyncTask extends AsyncTask<Integer, Void,Void> {

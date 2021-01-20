@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -14,14 +16,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.example.routecraft.R;
+import com.example.routecraft.data.pojos.Address;
 import com.example.routecraft.data.pojos.Route;
+import com.example.routecraft.data.pojos.RouteWithAddresses;
 import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.databinding.ActivityMainBinding;
+import com.example.routecraft.features.addAddressWithAutocomplete.AddAddressWithAutocompleteFragment;
 import com.example.routecraft.features.dialogs.CreateNewRouteDialog;
 import com.example.routecraft.features.dialogs.DeleteRouteDialog;
+import com.example.routecraft.features.dialogs.GenericMessageDialog;
 import com.example.routecraft.features.dialogs.RenameRouteDialog;
 import com.example.routecraft.features.login.LoginActivity;
 import com.example.routecraft.features.shared.SharedViewModel;
@@ -33,7 +40,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
         RouteAdapter.Listener,
         CreateNewRouteDialog.Listener,
         RenameRouteDialog.Listener,
-        DeleteRouteDialog.Listener {
+        DeleteRouteDialog.Listener,
+        GenericMessageDialog.Listener,
+        AddAddressWithAutocompleteFragment.Listener {
 
     private final String DEBUG_TAG = "DEBUG_TAG";
 
@@ -50,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     private AlertDialog createNewRouteDialog;
     private AlertDialog renameRouteDialog;
     private AlertDialog deleteRouteDialog;
-
+    private AlertDialog genericMessageDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     private void init() {
         viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         viewModel.setViewListener(this);
-        //sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
+        sharedViewModel = new ViewModelProvider(this).get(SharedViewModel.class);
         session = new Session(this);
 
         binding.usernameTv.setText(session.getUsername());
@@ -76,6 +85,26 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
 
         setOnClickListeners();
         viewModel.getRoute(session.getCurrentRoute());
+    }
+
+    private void setOnClickListeners() {
+        binding.createNewRouteBtn.setOnClickListener(view -> openNewRouteDialog());
+
+        binding.logoutBtn.setOnClickListener(view -> {
+
+            if (!session.getRememberUsername()) {
+                session.setUserId(0);
+                session.setUsername("");
+            }
+
+            if (session.getStayLoggedIn()) {
+                session.setStayLoggedIn(false);
+            }
+
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     @Override
@@ -100,24 +129,9 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
         return NavigationUI.navigateUp(navController, appBarConfiguration) || super.onSupportNavigateUp();
     }
 
-    private void setOnClickListeners() {
-        binding.createNewRouteBtn.setOnClickListener(view -> openNewRouteDialog());
-
-        binding.logoutBtn.setOnClickListener(view -> {
-
-            if (!session.getRememberUsername()) {
-                session.setUserId(0);
-                session.setUsername("");
-            }
-
-            if (session.getStayLoggedIn()) {
-                session.setStayLoggedIn(false);
-            }
-
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-        });
+    @Override
+    public Session getSession() {
+        return session;
     }
 
     @Override
@@ -194,13 +208,25 @@ public class MainActivity extends AppCompatActivity implements MainActivityViewM
     }
 
     private void routeListScrollToTop() {
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            binding.routeListRv.scrollToPosition(0);
-        }, 500);
+        new Handler(Looper.getMainLooper()).postDelayed(() ->
+                binding.routeListRv.scrollToPosition(0), 500);
     }
 
     @Override
-    public Session getSession() {
-        return session;
+    public void addAddressWithAutoMessageDialog(String message) {
+        showGenericMessageDialog(message);
+    }
+
+    private void showGenericMessageDialog(String message) {
+        genericMessageDialog = new GenericMessageDialog(this,
+                getLayoutInflater(),
+                message)
+                .create();
+        genericMessageDialog.show();
+    }
+
+    @Override
+    public void genericMessageDialogOkBtnClick() {
+        genericMessageDialog.dismiss();
     }
 }

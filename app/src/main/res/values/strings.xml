@@ -29,6 +29,10 @@
 
         <string name="add_address_add_btn">Add</string>
         <string name="add_address_cancel_btn">Cancel</string>
+        <string name="add_address_street_and_house_number">Street and house number</string>
+        <string name="add_address_1234">1234</string>
+        <string name="add_address_aa">AA</string>
+        <string name="add_address_city">City</string>
         <string name="add_address_with_auto_searching">Searching…</string>
         <string name="Add_address_with_auto_enter_address">Enter address</string>
         <string name="Add_address_with_auto_no_search_results">No search results</string>

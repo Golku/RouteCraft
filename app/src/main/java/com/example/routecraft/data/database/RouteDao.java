@@ -30,7 +30,7 @@ public interface RouteDao {
 
     @Transaction
     @Query("SELECT * FROM route")
-    List<RouteWithAddresses> getRouteWithAddresses();
+    LiveData<List<RouteWithAddresses>> getAllRouteWithAddresses();
 
     @Query("SELECT * FROM Route ORDER BY selected DESC, creationDate DESC")
     LiveData<List<Route>> getAllRoutes();

@@ -7,26 +7,110 @@
     android:layout_height="match_parent"
     tools:context=".features.addAddress.AddAddressFragment">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/street_name"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/new_address_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        app:boxBackgroundMode="outline"
-        android:hint="Street and house number"
+        android:background="@color/colorWhite"
+        android:elevation="5dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/adding_address_pb"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/city_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/street_name" />
+
+        <ImageView
+            android:id="@+id/address_type"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_marker_blue"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/city_name"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/street_name" />
+
+        <TextView
+            android:id="@+id/street_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/autocomplete_prediction_street_name"
+            android:textColor="@color/colorStreetDark"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/city_name"
+            app:layout_constraintEnd_toStartOf="@+id/added"
+            app:layout_constraintStart_toEndOf="@+id/adding_address_pb"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/city_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="16dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/autocomplete_prediction_city_name"
+            android:textColor="@color/colorGrey"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/added"
+            app:layout_constraintStart_toEndOf="@+id/adding_address_pb"
+            app:layout_constraintTop_toBottomOf="@+id/street_name" />
+
+        <ImageView
+            android:id="@+id/added"
+            android:layout_width="70dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@null"
+            android:src="@drawable/added_ic"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/street_name_input"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/add_address_street_and_house_number"
+        app:boxBackgroundMode="outline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_address_container">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/street_name_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textVisiblePassword"
-            android:maxLines="1">
+            android:maxLines="1"
+            android:nextFocusDown="@+id/postcode_num_et">
 
 
         </com.google.android.material.textfield.TextInputEditText>
@@ -38,19 +122,20 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
+        android:hint="@string/add_address_1234"
         app:boxBackgroundMode="outline"
-        android:hint="Postcode"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/street_name">
+        app:layout_constraintTop_toBottomOf="@+id/street_name_input">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/postcode_num_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textVisiblePassword"
-            android:maxLines="1">
+            android:inputType="number"
+            android:maxLines="1"
+            android:nextFocusDown="@+id/postcode_letters_et">
 
 
         </com.google.android.material.textfield.TextInputEditText>
@@ -60,20 +145,22 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/postcode_letters"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="100dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/add_address_aa"
         app:boxBackgroundMode="outline"
-        android:hint="Postcode"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/postcode_num"
-        app:layout_constraintTop_toBottomOf="@+id/street_name">
+        app:layout_constraintTop_toBottomOf="@+id/street_name_input">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/postcode_letters_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textVisiblePassword"
+            android:inputType="text"
             android:maxLines="1">
 
 
@@ -86,11 +173,11 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="24dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/add_address_city"
         app:boxBackgroundMode="outline"
-        android:hint="City"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/postcode_num">
@@ -99,7 +186,8 @@
             android:id="@+id/city_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textVisiblePassword"
+            android:imeOptions="actionDone"
+            android:inputType="text"
             android:maxLines="1">
 
 
@@ -109,21 +197,21 @@
 
     <Button
         android:id="@+id/add_btn"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="24dp"
         android:text="@string/add_address_add_btn"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/cancel_btn"
         app:layout_constraintTop_toBottomOf="@+id/city" />
 
     <Button
         android:id="@+id/cancel_btn"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
+        android:layout_width="130dp"
+        android:layout_height="60dp"
         android:layout_marginTop="24dp"
         android:text="@string/add_address_cancel_btn"
+        app:layout_constraintEnd_toStartOf="@+id/add_btn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/city" />
 

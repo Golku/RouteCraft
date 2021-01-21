@@ -8,12 +8,10 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.example.routecraft.data.pojos.Address;
-import com.example.routecraft.data.pojos.IdHolder;
 import com.example.routecraft.data.pojos.Route;
 import com.example.routecraft.data.pojos.RouteWithAddresses;
 import com.example.routecraft.data.pojos.Session;
 import com.example.routecraft.features.shared.ItemManager;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;

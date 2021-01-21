@@ -17,7 +17,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyCVp1a15L8Q0UDp9G62i60uPTX5sLOaBJ8" />
 
         <activity android:name=".features.login.LoginActivity">
             <intent-filter>
